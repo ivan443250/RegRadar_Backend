@@ -10,5 +10,5 @@ public class Source : BaseEntity
     public string? BaseUrl { get; set; }
     public bool IsActive { get; set; } = true;
 
-    
+    public ICollection<Document> Documents { get; set; } = new List<Document>();
 }
