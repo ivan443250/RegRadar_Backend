@@ -5,7 +5,9 @@
       "Bash(dotnet --list-sdks)",
       "Bash(docker --version)",
       "Bash(docker compose *)",
-      "Bash(dotnet sln *)"
+      "Bash(dotnet sln *)",
+      "Bash(ls -1 src/RegRadar.Infrastructure/Persistence/Configurations/)",
+      "Bash(ls -1 src/RegRadar.Infrastructure/Persistence/)"
     ]
   }
 }
