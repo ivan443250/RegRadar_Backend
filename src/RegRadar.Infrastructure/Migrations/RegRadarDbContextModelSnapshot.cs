@@ -85,7 +85,8 @@ namespace RegRadar.Infrastructure.Migrations
 
                     b.HasIndex("ClientProfileId");
 
-                    b.HasIndex("RegulatoryEventId");
+                    b.HasIndex("RegulatoryEventId", "ClientProfileId")
+                        .IsUnique();
 
                     b.ToTable("ClientImpacts");
                 });
@@ -97,7 +98,8 @@ namespace RegRadar.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("BankSegment")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("CashOperationsLevel")
                         .IsRequired()
@@ -105,7 +107,8 @@ namespace RegRadar.Infrastructure.Migrations
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -117,10 +120,12 @@ namespace RegRadar.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Industry")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("Okved")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<string>("RiskProfile")
                         .IsRequired()
@@ -253,7 +258,8 @@ namespace RegRadar.Infrastructure.Migrations
 
                     b.Property<string>("TextHash")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -263,7 +269,8 @@ namespace RegRadar.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DocumentId");
+                    b.HasIndex("DocumentId", "TextHash")
+                        .IsUnique();
 
                     b.ToTable("DocumentVersions");
                 });
@@ -442,14 +449,16 @@ namespace RegRadar.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DocumentId");
+                    b.HasIndex("DocumentId")
+                        .IsUnique();
 
                     b.ToTable("RegulatoryEvents");
                 });
@@ -490,7 +499,7 @@ namespace RegRadar.Infrastructure.Migrations
                     b.HasOne("RegRadar.Domain.Entities.ClientProfile", "ClientProfile")
                         .WithMany("ClientImpacts")
                         .HasForeignKey("ClientProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("RegRadar.Domain.Entities.RegulatoryEvent", "RegulatoryEvent")
@@ -550,7 +559,8 @@ namespace RegRadar.Infrastructure.Migrations
                 {
                     b.HasOne("RegRadar.Domain.Entities.ClientProfile", "ClientProfile")
                         .WithMany()
-                        .HasForeignKey("ClientProfileId");
+                        .HasForeignKey("ClientProfileId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("RegRadar.Domain.Entities.RegulatoryEvent", "RegulatoryEvent")
                         .WithMany("Notifications")
@@ -575,8 +585,8 @@ namespace RegRadar.Infrastructure.Migrations
             modelBuilder.Entity("RegRadar.Domain.Entities.RegulatoryEvent", b =>
                 {
                     b.HasOne("RegRadar.Domain.Entities.Document", "Document")
-                        .WithMany()
-                        .HasForeignKey("DocumentId")
+                        .WithOne()
+                        .HasForeignKey("RegRadar.Domain.Entities.RegulatoryEvent", "DocumentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

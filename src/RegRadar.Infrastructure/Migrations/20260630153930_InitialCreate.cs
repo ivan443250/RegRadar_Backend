@@ -35,16 +35,16 @@ namespace RegRadar.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CompanyName = table.Column<string>(type: "text", nullable: false),
-                    Okved = table.Column<string>(type: "text", nullable: true),
-                    Industry = table.Column<string>(type: "text", nullable: true),
+                    CompanyName = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    Okved = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    Industry = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Size = table.Column<string>(type: "text", nullable: false),
                     HasForeignTrade = table.Column<bool>(type: "boolean", nullable: false),
                     UsesOnlinePayments = table.Column<bool>(type: "boolean", nullable: false),
                     HandlesPersonalData = table.Column<bool>(type: "boolean", nullable: false),
                     CashOperationsLevel = table.Column<string>(type: "text", nullable: false),
                     RiskProfile = table.Column<string>(type: "text", nullable: false),
-                    BankSegment = table.Column<string>(type: "text", nullable: true),
+                    BankSegment = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -108,7 +108,7 @@ namespace RegRadar.Infrastructure.Migrations
                     DocumentId = table.Column<Guid>(type: "uuid", nullable: false),
                     VisionNumber = table.Column<int>(type: "integer", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
-                    TextHash = table.Column<string>(type: "text", nullable: false),
+                    TextHash = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -181,7 +181,7 @@ namespace RegRadar.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     DocumentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
                     Summary = table.Column<string>(type: "text", nullable: false),
                     ImpactLevel = table.Column<string>(type: "text", nullable: false),
                     ImpactExplanation = table.Column<string>(type: "text", nullable: true),
@@ -245,7 +245,7 @@ namespace RegRadar.Infrastructure.Migrations
                         column: x => x.ClientProfileId,
                         principalTable: "ClientProfiles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ClientImpacts_RegulatoryEvents_RegulatoryEventId",
                         column: x => x.RegulatoryEventId,
@@ -277,7 +277,8 @@ namespace RegRadar.Infrastructure.Migrations
                         name: "FK_Notifications_ClientProfiles_ClientProfileId",
                         column: x => x.ClientProfileId,
                         principalTable: "ClientProfiles",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Notifications_RegulatoryEvents_RegulatoryEventId",
                         column: x => x.RegulatoryEventId,
@@ -292,9 +293,10 @@ namespace RegRadar.Infrastructure.Migrations
                 column: "ClientProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientImpacts_RegulatoryEventId",
+                name: "IX_ClientImpacts_RegulatoryEventId_ClientProfileId",
                 table: "ClientImpacts",
-                column: "RegulatoryEventId");
+                columns: new[] { "RegulatoryEventId", "ClientProfileId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_DocumentChunks_DocumentVersionId",
@@ -313,9 +315,10 @@ namespace RegRadar.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DocumentVersions_DocumentId",
+                name: "IX_DocumentVersions_DocumentId_TextHash",
                 table: "DocumentVersions",
-                column: "DocumentId");
+                columns: new[] { "DocumentId", "TextHash" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_LlmCallLogs_DocumentId",
@@ -340,7 +343,8 @@ namespace RegRadar.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_RegulatoryEvents_DocumentId",
                 table: "RegulatoryEvents",
-                column: "DocumentId");
+                column: "DocumentId",
+                unique: true);
         }
 
         /// <inheritdoc />
