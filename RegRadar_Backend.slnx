@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RegRadar.Api/RegRadar.Api.csproj" />
+    <Project Path="src/RegRadar.Application/RegRadar.Application.csproj" />
+    <Project Path="src/RegRadar.Domain/RegRadar.Domain.csproj" />
+    <Project Path="src/RegRadar.Infrastructure/RegRadar.Infrastructure.csproj" />
+    <Project Path="src/RegRadar.Workers/RegRadar.Workers.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RegRadar.Tests/RegRadar.Tests.csproj" />
+  </Folder>
+</Solution>
