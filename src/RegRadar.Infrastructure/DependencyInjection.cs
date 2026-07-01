@@ -2,7 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using RegRadar.Application.Abstractions;
 using RegRadar.Infrastructure.Persistence;
+using RegRadar.Infrastructure.TextExtraction.Implementations;
+using RegRadar.Infrastructure.TextProcessing;
 
 namespace RegRadar.Infrastructure;
 
@@ -12,6 +15,14 @@ public static class DependencyInjection
     {
         services.AddDbContext<RegRadarDbContext>(opt =>
             opt.UseNpgsql(config.GetConnectionString("Postgres")));
+
+        services.AddTransient<ITextExtractor, TxtTextExtractor>();
+        services.AddTransient<ITextExtractor, PdfTextExtractor>();
+        services.AddTransient<ITextExtractor, DocxTextExtractor>();
+
+        services.AddTransient<ITextNormalizer, TextNormalizer>();
+        services.AddTransient<ITextHasher, TextHasher>();
+
         return services;
     }
 }

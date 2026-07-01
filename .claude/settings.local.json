@@ -7,7 +7,9 @@
       "Bash(docker compose *)",
       "Bash(dotnet sln *)",
       "Bash(ls -1 src/RegRadar.Infrastructure/Persistence/Configurations/)",
-      "Bash(ls -1 src/RegRadar.Infrastructure/Persistence/)"
+      "Bash(ls -1 src/RegRadar.Infrastructure/Persistence/)",
+      "Bash(ls -1 src/RegRadar.Application/Abstractions/)",
+      "Bash(ls -1 src/RegRadar.Infrastructure/)"
     ]
   }
 }
