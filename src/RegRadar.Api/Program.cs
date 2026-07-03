@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 using RegRadar.Infrastructure;
+using RegRadar.Infrastructure.TextProcessing;
 
 using Scalar.AspNetCore;
 

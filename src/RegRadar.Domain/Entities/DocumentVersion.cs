@@ -7,7 +7,7 @@ public class DocumentVersion : BaseEntity
     public Guid DocumentId { get; set; }
     public Document Document { get; set; } = null!;
 
-    public int VisionNumber { get; set; }
+    public int VersionNumber { get; set; }
     public string Text { get; set; } = null!;
     public string TextHash { get; set; } = null!;
 

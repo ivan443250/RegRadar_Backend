@@ -4,8 +4,8 @@ public enum ProcessingStatus
 {
     Pending,
     Extracting,
-    Cunking,
-    AwaitigAi,
+    Chunking,
+    AwaitingAi,
     Processing,
     Completed,
     Failed
