@@ -4,6 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 using RegRadar.Application.Abstractions;
 using RegRadar.Infrastructure.Ai;
+using RegRadar.Infrastructure.Impact;
+using RegRadar.Infrastructure.Ingestion;
+using RegRadar.Infrastructure.Notifications;
 using RegRadar.Infrastructure.Persistence;
 using RegRadar.Infrastructure.Processing;
 using RegRadar.Infrastructure.TextExtraction.Implementations;
@@ -32,6 +35,27 @@ public static class DependencyInjection
         services.AddScoped<IDocumentProcessingService, DocumentProcessingService>();
 
         services.AddTransient<IAiAnalysisService, MockAiAnalysisService>();
+
+        services.Configure<BankOfRussiaOptions>(config.GetSection("BankOfRussia"));
+        services.AddHttpClient(BankOfRussiaIngestor.HttpClientName, client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("RegRadar/1.0");
+        });
+        services.AddScoped<ISourceIngestor, BankOfRussiaIngestor>();
+
+        services.Configure<SeedOptions>(config.GetSection("Seed"));
+        services.AddScoped<ISourceIngestor, LocalSeedIngestor>();
+
+        services.AddTransient<IImpactAssessor, RuleBasedImpactAssessor>();
+        services.AddScoped<IImpactService, ImpactService>();
+
+        services.Configure<NotificationOptions>(config.GetSection("Notifications"));
+        services.AddHttpClient(BitrixNotificationSender.HttpClientName, client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+        services.AddScoped<INotificationSender, BitrixNotificationSender>();
 
         return services;
     }

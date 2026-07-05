@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 using RegRadar.Infrastructure;
-using RegRadar.Infrastructure.TextProcessing;
+using RegRadar.Infrastructure.Persistence;
 
 using Scalar.AspNetCore;
 
@@ -35,6 +35,19 @@ builder.Services.AddHealthChecks()
     .AddRedis(redis, name: "redis", tags: ["ready"]);
 
 var app = builder.Build();
+
+using (IServiceScope seedScope = app.Services.CreateScope())
+{
+    try
+    {
+        var db = seedScope.ServiceProvider.GetRequiredService<RegRadarDbContext>();
+        await SeedData.EnsureDemoClientsAsync(db);
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogWarning(ex, "Demo client seeding skipped: database unavailable at startup");
+    }
+}
 
 app.UseSerilogRequestLogging();
 app.UseCors();

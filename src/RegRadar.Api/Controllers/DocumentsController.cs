@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using RegRadar.Application.Abstractions;
 using RegRadar.Application.Dtos;
 using RegRadar.Application.Mapping;
+using RegRadar.Domain.Enums;
 using RegRadar.Infrastructure.Persistence;
 
 namespace RegRadar.Api.Controllers;
@@ -33,7 +34,12 @@ public class DocumentsController(RegRadarDbContext db, IDocumentProcessingServic
             return BadRequest(new { error = "File is required." });
 
         await using Stream stream = file.OpenReadStream();
-        DocumentUploadResult result = await processing.UploadAsync(file.FileName, stream, ct);
+
+        DocumentIngestRequest request = new(
+            FileName: file.FileName,
+            SourceType: SourceType.UserUpload);
+
+        DocumentUploadResult result = await processing.IngestAsync(request, stream, ct);
 
         return result.Outcome switch
         {
@@ -41,6 +47,19 @@ public class DocumentsController(RegRadarDbContext db, IDocumentProcessingServic
             UploadOutcome.Duplicate => Conflict(new { documentId = result.DocumentId, error = "Document with the same content already exists." }),
             UploadOutcome.UnsupportedFormat => BadRequest(new { error = result.Error }),
             _ => StatusCode(StatusCodes.Status500InternalServerError, new { error = result.Error })
+        };
+    }
+
+    [HttpPost("{id:guid}/reprocess")]
+    public async Task<ActionResult> Reprocess(Guid id, CancellationToken ct)
+    {
+        DocumentUploadResult result = await processing.ReprocessAsync(id, ct);
+
+        return result.Outcome switch
+        {
+            UploadOutcome.Created => Ok(new { documentId = result.DocumentId }),
+            UploadOutcome.Duplicate => Conflict(new { documentId = result.DocumentId, error = "Document already has a regulatory event." }),
+            _ => BadRequest(new { error = result.Error })
         };
     }
 }

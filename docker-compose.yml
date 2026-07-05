@@ -38,8 +38,26 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       ConnectionStrings__Redis: "redis:6379"
+      Notifications__BitrixWebhookUrl: "${BITRIX_WEBHOOK_URL:-}"
     ports:
       - "8080:8080"
+    volumes:
+      - rawfiles:/app/storage/raw
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Ingestion__IntervalMinutes: "60"
+    volumes:
+      - rawfiles:/app/storage/raw
 
 volumes:
   pgdata:
+  rawfiles:

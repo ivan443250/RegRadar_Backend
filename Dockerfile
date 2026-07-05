@@ -13,5 +13,6 @@ RUN dotnet publish src/RegRadar.Api/RegRadar.Api.csproj -c Release -o /app/publi
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
+COPY seed/ seed/
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "RegRadar.Api.dll"]

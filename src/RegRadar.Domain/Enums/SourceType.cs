@@ -5,5 +5,6 @@ public enum SourceType
     BankOfRussia,
     RegulationGov,
     PravoGov,
-    UserUpload
+    UserUpload,
+    Seed
 }

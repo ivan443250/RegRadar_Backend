@@ -20,4 +20,12 @@ public static class MappingExtensions
         new(p.Id, p.CompanyName, p.Okved, p.Industry, p.Size, p.HasForeignTrade,
             p.UsesOnlinePayments, p.HandlesPersonalData, p.CashOperationsLevel,
             p.RiskProfile, p.BankSegment);
+
+    public static ClientImpactDto ToDto(this ClientImpact i) =>
+        new(i.Id, i.RegulatoryEventId, i.ClientProfileId, i.ClientProfile.CompanyName,
+            i.ImpactLevel, i.Explanation);
+
+    public static NotificationDto ToDto(this Notification n) =>
+        new(n.Id, n.RegulatoryEventId, n.ClientProfileId, n.Channel, n.Status,
+            n.Payload, n.ErrorMessage, n.SentAt, n.CreatedAt);
 }

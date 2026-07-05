@@ -15,7 +15,13 @@
       "Bash(dotnet build *)",
       "Bash(dotnet add *)",
       "Bash(curl -s \"https://api.nuget.org/v3-flatcontainer/microsoft.openapi/index.json\")",
-      "Bash(dotnet ef *)"
+      "Bash(dotnet ef *)",
+      "Bash(ls -1 src/RegRadar.Workers/*.cs)",
+      "Bash(cat src/RegRadar.Workers/IngestionWorker.cs)",
+      "Bash(cat src/RegRadar.Workers/IngestionOptions.cs)",
+      "Bash(curl -s -m 15 \"https://www.cbr.ru/rss/RssPress\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -m 15 \"https://www.cbr.ru/rss/RssPress\")",
+      "Bash(dotnet test *)"
     ]
   }
 }
