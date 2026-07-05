@@ -9,6 +9,7 @@ Compose; AI-service не пишет напрямую в основную Postgre
 - [production integration](docs/MAIN_BACKEND_INTEGRATION.md);
 - [внутренний facade](docs/AI_SERVICE_INTEGRATION.md);
 - [AI pipeline](docs/AI_MODULE_PIPELINE.md);
+- [данные для frontend и scoring](docs/FRONTEND_DATA_GAPS_AND_SCORING.md);
 - [curl/Docker demo](docs/DEMO_SCRIPT.md).
 
 ## Production contract
