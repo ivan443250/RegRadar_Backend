@@ -1,0 +1,24 @@
+{
+  "documentId": "document-clients-1",
+  "title": "Требования к обработке персональных данных",
+  "text": "Организации обязаны соблюдать требования 152-ФЗ к обработке персональных данных и хранить согласия клиентов.",
+  "chunks": [
+    "Организации обязаны соблюдать требования 152-ФЗ к обработке персональных данных.",
+    "Операторы должны хранить согласия клиентов."
+  ],
+  "clients": [
+    {
+      "clientId": "client-personal-data-1",
+      "companyName": "ООО Персональные сервисы",
+      "okved": "62.01",
+      "industry": "IT",
+      "size": "Medium",
+      "hasForeignTrade": false,
+      "usesOnlinePayments": true,
+      "handlesPersonalData": true,
+      "cashOperationsLevel": "Low",
+      "riskProfile": "Medium",
+      "bankSegment": "SME"
+    }
+  ]
+}

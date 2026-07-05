@@ -1,0 +1,19 @@
+{
+  "created_at": "2026-07-03T00:48:46.998401Z",
+  "selected_count": 39,
+  "candidate_count": 12,
+  "domain_counts": {
+    "personal_data": 3,
+    "aml": 4,
+    "foreign_trade_currency_control": 3,
+    "financial_market_securities": 1,
+    "fuel_excise": 8,
+    "payments_digital_ruble": 5,
+    "lending_consumer_credit": 1,
+    "tax_reporting": 3,
+    "info_security_it": 5,
+    "product_marking_trade": 1,
+    "neutral_no_match": 5
+  },
+  "notes": "Copy the archive contents into the RegRadar project root. Enabled samples are in data/real_samples/txt and manifest.json."
+}

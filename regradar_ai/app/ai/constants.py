@@ -1,0 +1,3 @@
+DEFAULT_PROMPT_VERSION = "document_analysis_v1"
+DEFAULT_MODEL_VERSION = "mock-reg-radar-v1"
+DEFAULT_ANALYSIS_PROVIDER = "mock"

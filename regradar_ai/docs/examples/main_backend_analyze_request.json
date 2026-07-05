@@ -1,0 +1,28 @@
+{
+  "document": {
+    "id": "doc-123",
+    "title": "Изменения требований к персональным данным",
+    "text": "Организации обязаны соблюдать требования 152-ФЗ к обработке персональных данных и хранить согласия клиентов.",
+    "originalUrl": "https://example.test/doc-123",
+    "regulator": "Роскомнадзор",
+    "documentType": 1,
+    "publicationDate": "2026-07-01"
+  },
+  "clientProfiles": [
+    {
+      "id": "client-42",
+      "companyName": "ООО Интернет-магазин",
+      "okved": "47.91",
+      "industry": "e-commerce",
+      "size": 1,
+      "hasForeignTrade": false,
+      "usesOnlinePayments": true,
+      "handlesPersonalData": true,
+      "cashOperationsLevel": 0,
+      "riskProfile": 1,
+      "bankSegment": "SME"
+    }
+  ],
+  "modelOverride": "deepseek/deepseek-v4-flash",
+  "requestId": "request-123"
+}

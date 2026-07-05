@@ -1,0 +1,134 @@
+[
+  {
+    "id": "901_neutral_no_match_744_2026",
+    "filename": "901_neutral_no_match_744_2026.txt",
+    "enabled": false,
+    "source_file_original": "11.txt",
+    "document_title": "Постановление Правительства Российской Федерации от 15.06.2026 № 744 \"О внесении изменения в постановление Правительства Российской Федерации от 17 октября 2022 г. № 1844\"",
+    "document_date": "2026-06-15",
+    "document_type_expected": "постановление",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "902_neutral_no_match_2612-r_2025",
+    "filename": "902_neutral_no_match_2612-r_2025.txt",
+    "enabled": false,
+    "source_file_original": "14.txt",
+    "document_title": "Распоряжение Правительства Российской Федерации от 20.09.2025 № 2612-р",
+    "document_date": "2025-09-27",
+    "document_type_expected": "распоряжение",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "903_neutral_no_match_152-fz_2020",
+    "filename": "903_neutral_no_match_152-fz_2020.txt",
+    "enabled": false,
+    "source_file_original": "3.txt",
+    "document_title": "Федеральный закон от 23.05.2020 № 152-ФЗ \"О проведении эксперимента по организации и осуществлению дистанционного электронного голосования в городе федерального значения Москве\"",
+    "document_date": "2020-05-23",
+    "document_type_expected": "федеральный закон",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "904_neutral_no_match_3786-r_2024",
+    "filename": "904_neutral_no_match_3786-r_2024.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#11",
+    "document_title": "Распоряжение Правительства Российской Федерации от 16.12.2024 № 3786-р",
+    "document_date": "2024-12-20",
+    "document_type_expected": "распоряжение",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "905_neutral_no_match_495-r_2026",
+    "filename": "905_neutral_no_match_495-r_2026.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#12",
+    "document_title": "Распоряжение Правительства Российской Федерации от 13.03.2026 № 495-р",
+    "document_date": "2026-03-16",
+    "document_type_expected": "распоряжение",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "906_neutral_no_match_588-r_2022",
+    "filename": "906_neutral_no_match_588-r_2022.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#15",
+    "document_title": "Распоряжение Правительства Российской Федерации от 23.03.2022 № 588-р",
+    "document_date": "2022-03-24",
+    "document_type_expected": "распоряжение",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "907_neutral_no_match_1256-r_2021",
+    "filename": "907_neutral_no_match_1256-r_2021.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#17",
+    "document_title": "Распоряжение Правительства Российской Федерации от 15.05.2021 № 1256-р",
+    "document_date": "2021-05-18",
+    "document_type_expected": "распоряжение",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "908_neutral_no_match_2940-r_2022",
+    "filename": "908_neutral_no_match_2940-r_2022.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#21",
+    "document_title": "Распоряжение Правительства Российской Федерации от 07.10.2022 № 2940-р",
+    "document_date": "2022-10-10",
+    "document_type_expected": "распоряжение",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "909_neutral_no_match_2100-r_2023",
+    "filename": "909_neutral_no_match_2100-r_2023.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#22",
+    "document_title": "Распоряжение Правительства Российской Федерации от 03.08.2023 № 2100-р",
+    "document_date": "2023-08-04",
+    "document_type_expected": "распоряжение",
+    "domain_guess": "neutral_no_match",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "910_info_security_it_548_2023",
+    "filename": "910_info_security_it_548_2023.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#28",
+    "document_title": "Указ Президента Российской Федерации от 25.07.2023 № 548 \"О специальном представителе Президента Российской Федерации по вопросам международного сотрудничества в области информационной безопасности\"",
+    "document_date": "2023-07-25",
+    "document_type_expected": "указ",
+    "domain_guess": "info_security_it",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "911_info_security_it_1249-r_2021",
+    "filename": "911_info_security_it_1249-r_2021.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#30",
+    "document_title": "Распоряжение Правительства Российской Федерации от 15.05.2021 № 1249-р",
+    "document_date": "2021-05-18",
+    "document_type_expected": "распоряжение",
+    "domain_guess": "info_security_it",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  },
+  {
+    "id": "912_payments_digital_ruble_1436_2022",
+    "filename": "912_payments_digital_ruble_1436_2022.txt",
+    "enabled": false,
+    "source_file_original": "Разные документы.txt#36",
+    "document_title": "Постановление Правительства Российской Федерации от 18.08.2022 № 1436 \"О внесении изменений в Правила предоставления из федерального бюджета субсидии акционерному обществу \"Национальная система платежных карт\" на стимулирование доступных внутренних туристских поездок через возмещение части стоимости оплаченной туристской услуги\"",
+    "document_date": "2022-08-20",
+    "document_type_expected": "постановление",
+    "domain_guess": "payments_digital_ruble",
+    "reason": "Kept as candidate; review manually before adding to enabled manifest."
+  }
+]
