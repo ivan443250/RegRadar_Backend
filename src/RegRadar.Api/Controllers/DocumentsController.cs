@@ -50,6 +50,39 @@ public class DocumentsController(RegRadarDbContext db, IDocumentProcessingServic
         };
     }
 
+    [HttpGet("{id:guid}/text")]
+    public async Task<ActionResult<DocumentTextDto>> GetText(Guid id)
+    {
+        var version = await db.DocumentVersions.AsNoTracking()
+            .Where(v => v.DocumentId == id)
+            .OrderByDescending(v => v.VersionNumber)
+            .FirstOrDefaultAsync();
+
+        return version is null
+            ? NotFound()
+            : new DocumentTextDto(id, version.VersionNumber, version.Text);
+    }
+
+    [HttpGet("{id:guid}/chunks")]
+    public async Task<ActionResult<IEnumerable<DocumentChunkDto>>> GetChunks(Guid id)
+    {
+        var version = await db.DocumentVersions.AsNoTracking()
+            .Where(v => v.DocumentId == id)
+            .OrderByDescending(v => v.VersionNumber)
+            .FirstOrDefaultAsync();
+
+        if (version is null)
+            return NotFound();
+
+        var chunks = await db.DocumentChunks.AsNoTracking()
+            .Where(c => c.DocumentVersionId == version.Id)
+            .OrderBy(c => c.ChunkIndex)
+            .Select(c => new DocumentChunkDto(c.Id, c.ChunkIndex, c.Content, c.TokenCount))
+            .ToListAsync();
+
+        return Ok(chunks);
+    }
+
     [HttpPost("{id:guid}/reprocess")]
     public async Task<ActionResult> Reprocess(Guid id, CancellationToken ct)
     {

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 
 using RegRadar.Infrastructure;
 using RegRadar.Infrastructure.Persistence;
@@ -36,21 +37,25 @@ builder.Services.AddHealthChecks()
 
 var app = builder.Build();
 
-using (IServiceScope seedScope = app.Services.CreateScope())
+using (IServiceScope startupScope = app.Services.CreateScope())
 {
     try
     {
-        var db = seedScope.ServiceProvider.GetRequiredService<RegRadarDbContext>();
+        var db = startupScope.ServiceProvider.GetRequiredService<RegRadarDbContext>();
+        await db.Database.MigrateAsync();
         await SeedData.EnsureDemoClientsAsync(db);
     }
     catch (Exception ex)
     {
-        app.Logger.LogWarning(ex, "Demo client seeding skipped: database unavailable at startup");
+        app.Logger.LogWarning(ex, "Startup migration/seeding skipped: database unavailable");
     }
 }
 
 app.UseSerilogRequestLogging();
 app.UseCors();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.MapOpenApi();
 app.MapScalarApiReference();
@@ -63,7 +68,5 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions()
 });
 
 app.MapControllers();
-
-app.MapGet("/", () => Results.Ok(new { service = "RegRadar", status = "ok" }));
 
 app.Run();

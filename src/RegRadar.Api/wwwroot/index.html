@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RegRadar — мониторинг регуляторных изменений</title>
+<style>
+  :root {
+    --bg: #0f1420; --panel: #171e2e; --panel2: #1e2739; --border: #2a3550;
+    --text: #e8ecf4; --muted: #8b96ab; --accent: #4f8cff;
+    --high: #ef4444; --medium: #f59e0b; --low: #6b7280; --ok: #22c55e;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.5 'Segoe UI', system-ui, sans-serif; }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 24px; background: var(--panel); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; flex-wrap: wrap; }
+  header h1 { font-size: 18px; margin-right: 8px; }
+  header h1 span { color: var(--accent); }
+  nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav button { background: none; border: none; color: var(--muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+  nav button.active { background: var(--panel2); color: var(--text); }
+  nav button:hover { color: var(--text); }
+  .spacer { flex: 1; }
+  .btn { background: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+  .btn:hover { filter: brightness(1.1); }
+  .btn.secondary { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+  .btn.small { padding: 4px 10px; font-size: 13px; }
+  .btn:disabled { opacity: .5; cursor: wait; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  .filters { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+  .filters input, .filters select { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+  .filters input { flex: 1; min-width: 200px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; cursor: pointer; transition: border-color .15s; }
+  .card:hover { border-color: var(--accent); }
+  .card h3 { font-size: 15px; margin-bottom: 6px; }
+  .card p { color: var(--muted); font-size: 13px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge.High { background: rgba(239,68,68,.15); color: var(--high); }
+  .badge.Medium { background: rgba(245,158,11,.15); color: var(--medium); }
+  .badge.Low { background: rgba(107,114,128,.2); color: #9aa3b2; }
+  .badge.gray { background: var(--panel2); color: var(--muted); }
+  .badge.green { background: rgba(34,197,94,.15); color: var(--ok); }
+  .badge.red { background: rgba(239,68,68,.15); color: var(--high); }
+  .badge.amber { background: rgba(245,158,11,.15); color: var(--medium); }
+  table { width: 100%; border-collapse: collapse; background: var(--panel); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  th { color: var(--muted); font-weight: 600; background: var(--panel2); }
+  tr:last-child td { border-bottom: none; }
+  .detail-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 16px; }
+  .detail-panel h2 { font-size: 18px; margin-bottom: 10px; }
+  .muted { color: var(--muted); }
+  .section-title { font-size: 15px; font-weight: 600; margin: 22px 0 10px; }
+  a { color: var(--accent); }
+  .back { color: var(--muted); cursor: pointer; margin-bottom: 14px; display: inline-block; }
+  .back:hover { color: var(--text); }
+  #toast { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+  .toast-item { background: var(--panel2); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 12px 18px; border-radius: 8px; max-width: 380px; animation: fadein .2s; }
+  .toast-item.err { border-left-color: var(--high); }
+  .toast-item.ok { border-left-color: var(--ok); }
+  @keyframes fadein { from { opacity: 0; transform: translateY(8px); } }
+  pre { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  details summary { cursor: pointer; color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .empty { text-align: center; color: var(--muted); padding: 40px; }
+  .client-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  .flags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .notice { background: var(--panel); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Reg<span>Radar</span></h1>
+  <nav id="nav"></nav>
+  <div class="spacer"></div>
+  <button class="btn secondary" id="btn-upload">Загрузить документ</button>
+  <input type="file" id="file-input" accept=".pdf,.docx,.txt" hidden>
+  <button class="btn" id="btn-ingest">Обновить из источников</button>
+</header>
+<main id="app"></main>
+<div id="toast"></div>
+
+<script>
+const state = {
+  view: 'feed',
+  events: [], documents: [], clients: [], notifications: [],
+  impacts: {},
+  selectedEvent: null, selectedClient: null,
+  search: '', impactFilter: '',
+};
+
+const TABS = [
+  ['feed', 'События'],
+  ['documents', 'Документы'],
+  ['clients', 'Клиенты'],
+  ['notifications', 'Уведомления'],
+  ['clientView', 'Вид клиента'],
+];
+
+async function api(path, opts) {
+  const res = await fetch(path, opts);
+  let data = null;
+  try { data = await res.json(); } catch {}
+  return { ok: res.ok, status: res.status, data };
+}
+
+function toast(msg, kind = '') {
+  const el = document.createElement('div');
+  el.className = 'toast-item ' + kind;
+  el.textContent = msg;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('ru-RU');
+}
+
+async function loadAll() {
+  const [ev, docs, clients, notifs] = await Promise.all([
+    api('/api/regulatoryevents'), api('/api/documents'),
+    api('/api/clientprofiles'), api('/api/notifications'),
+  ]);
+  state.events = ev.data ?? [];
+  state.documents = docs.data ?? [];
+  state.clients = clients.data ?? [];
+  state.notifications = notifs.data ?? [];
+  const impactResults = await Promise.all(
+    state.events.map(e => api(`/api/regulatoryevents/${e.id}/impacts`))
+  );
+  state.impacts = {};
+  state.events.forEach((e, i) => state.impacts[e.id] = impactResults[i].data ?? []);
+}
+
+function render() {
+  document.getElementById('nav').innerHTML = TABS.map(([id, label]) =>
+    `<button class="${state.view === id || (id === 'feed' && state.view === 'eventDetail') ? 'active' : ''}"
+       onclick="go('${id}')">${label}</button>`).join('');
+  const views = {
+    feed: renderFeed, eventDetail: renderEventDetail, documents: renderDocuments,
+    clients: renderClients, notifications: renderNotifications, clientView: renderClientView,
+  };
+  document.getElementById('app').innerHTML = views[state.view]();
+}
+
+function go(view) {
+  state.view = view;
+  render();
+}
+
+function openEvent(id) {
+  state.selectedEvent = state.events.find(e => e.id === id);
+  state.view = 'eventDetail';
+  render();
+}
+
+function renderFeed() {
+  let events = state.events;
+  if (state.impactFilter) events = events.filter(e => e.impactLevel === state.impactFilter);
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    events = events.filter(e => (e.title + ' ' + e.summary).toLowerCase().includes(q));
+  }
+  const cards = events.map(e => {
+    const affected = (state.impacts[e.id] ?? []).length;
+    return `<div class="card" onclick="openEvent('${e.id}')">
+      <h3>${esc(e.title)}</h3>
+      <p>${esc(e.summary.slice(0, 220))}${e.summary.length > 220 ? '…' : ''}</p>
+      <div class="row">
+        <span class="badge ${e.impactLevel}">${e.impactLevel}</span>
+        ${e.tags.map(t => `<span class="badge gray">${esc(t)}</span>`).join('')}
+        <span class="muted">вступает: ${fmtDate(e.effectiveDate)}</span>
+        <span class="muted">·</span>
+        <span class="${affected ? '' : 'muted'}">затронуто клиентов: <b>${affected}</b></span>
+      </div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="filters">
+      <input placeholder="Поиск по заголовку и саммари…" value="${esc(state.search)}"
+        oninput="state.search=this.value; render()">
+      <select onchange="state.impactFilter=this.value; render()">
+        <option value="">Любое влияние</option>
+        <option ${state.impactFilter==='High'?'selected':''} value="High">High</option>
+        <option ${state.impactFilter==='Medium'?'selected':''} value="Medium">Medium</option>
+        <option ${state.impactFilter==='Low'?'selected':''} value="Low">Low</option>
+      </select>
+    </div>
+    ${cards || '<div class="empty">Событий пока нет — нажми «Обновить из источников»</div>'}`;
+}
+
+function renderEventDetail() {
+  const e = state.selectedEvent;
+  if (!e) return '<div class="empty">Событие не найдено</div>';
+  const doc = state.documents.find(d => d.id === e.documentId);
+  const impacts = state.impacts[e.id] ?? [];
+  const rows = impacts.map(i => `<tr>
+      <td><b>${esc(i.companyName)}</b></td>
+      <td><span class="badge ${i.impactLevel}">${i.impactLevel}</span></td>
+      <td class="muted">${esc(i.explanation ?? '')}</td>
+      <td><button class="btn small" onclick="notify('${e.id}','${i.clientProfileId}', this)">Уведомить</button></td>
+    </tr>`).join('');
+  return `
+    <span class="back" onclick="go('feed')">← к ленте</span>
+    <div class="detail-panel">
+      <h2>${esc(e.title)}</h2>
+      <div class="row" style="margin-bottom:12px">
+        <span class="badge ${e.impactLevel}">${e.impactLevel}</span>
+        ${e.tags.map(t => `<span class="badge gray">${esc(t)}</span>`).join('')}
+        <span class="muted">создано: ${fmtDate(e.createdAt)}</span>
+        <span class="muted">вступает: ${fmtDate(e.effectiveDate)}</span>
+      </div>
+      <p style="margin-bottom:10px">${esc(e.summary)}</p>
+      ${e.impactExplanation ? `<p class="muted">Оценка влияния: ${esc(e.impactExplanation)}</p>` : ''}
+      ${doc?.originalUrl ? `<p style="margin-top:10px"><a href="${esc(doc.originalUrl)}" target="_blank">Первоисточник ↗</a></p>` : ''}
+      ${doc ? `<p class="muted" style="margin-top:6px">Документ: ${esc(doc.title)} · статус ${doc.processingStatus} · источник ${doc.regulator ?? '—'}</p>` : ''}
+    </div>
+    <div class="row" style="justify-content:space-between">
+      <div class="section-title">Затронутые клиенты (${impacts.length})</div>
+      <button class="btn secondary small" onclick="recalc('${e.id}', this)">Пересчитать влияние</button>
+    </div>
+    ${impacts.length
+      ? `<table><tr><th>Клиент</th><th>Влияние</th><th>Почему</th><th></th></tr>${rows}</table>`
+      : '<div class="empty">Влияние на клиентов не выявлено</div>'}
+    <div id="notify-result"></div>`;
+}
+
+function renderDocuments() {
+  const rows = state.documents.map(d => `<tr>
+      <td><b>${esc(d.title)}</b></td>
+      <td>${esc(d.regulator ?? '—')}</td>
+      <td>${fmtDate(d.publicationDate)}</td>
+      <td><span class="badge ${d.processingStatus === 'Completed' ? 'green' : d.processingStatus === 'Failed' ? 'red' : 'amber'}">${d.processingStatus}</span></td>
+      <td>${d.processingStatus !== 'Completed'
+        ? `<button class="btn small secondary" onclick="reprocess('${d.id}', this)">Повторить AI</button>` : ''}</td>
+    </tr>`).join('');
+  return `<div class="section-title">Документы (${state.documents.length})</div>
+    ${state.documents.length
+      ? `<table><tr><th>Название</th><th>Регулятор</th><th>Публикация</th><th>Статус</th><th></th></tr>${rows}</table>`
+      : '<div class="empty">Документов нет</div>'}`;
+}
+
+function renderClients() {
+  const flag = (v, label) => v ? `<span class="badge gray">${label}</span>` : '';
+  const cards = state.clients.map(c => `<div class="client-card">
+      <b>${esc(c.companyName)}</b>
+      <p class="muted">${esc(c.industry ?? '')} · ОКВЭД ${esc(c.okved ?? '—')} · ${c.size}</p>
+      <div class="flags">
+        ${flag(c.hasForeignTrade, 'ВЭД')}
+        ${flag(c.usesOnlinePayments, 'онлайн-платежи')}
+        ${flag(c.handlesPersonalData, 'персданные')}
+        ${c.cashOperationsLevel === 'High' ? '<span class="badge gray">наличные: high</span>' : ''}
+        <span class="badge ${c.riskProfile}">риск: ${c.riskProfile}</span>
+      </div>
+    </div>`).join('');
+  return `<div class="section-title">Профили клиентов (${state.clients.length})</div><div class="grid">${cards}</div>`;
+}
+
+function renderNotifications() {
+  const rows = state.notifications.map(n => {
+    const ev = state.events.find(e => e.id === n.regulatoryEventId);
+    const cl = state.clients.find(c => c.id === n.clientProfileId);
+    const badge = n.status === 'Sent' ? 'green' : n.status === 'Failed' ? 'red' : n.status === 'Mocked' ? 'amber' : 'gray';
+    return `<tr>
+      <td>${fmtDate(n.createdAt)}</td>
+      <td>${esc(ev?.title.slice(0, 60) ?? n.regulatoryEventId)}</td>
+      <td>${esc(cl?.companyName ?? '—')}</td>
+      <td>${n.channel}</td>
+      <td><span class="badge ${badge}">${n.status}</span></td>
+    </tr>`;
+  }).join('');
+  return `<div class="section-title">Журнал уведомлений (${state.notifications.length})</div>
+    ${state.notifications.length
+      ? `<table><tr><th>Дата</th><th>Событие</th><th>Клиент</th><th>Канал</th><th>Статус</th></tr>${rows}</table>`
+      : '<div class="empty">Уведомлений ещё не отправлялось</div>'}`;
+}
+
+function renderClientView() {
+  const options = state.clients.map(c =>
+    `<option value="${c.id}" ${state.selectedClient === c.id ? 'selected' : ''}>${esc(c.companyName)}</option>`).join('');
+  let body = '<div class="empty">Выбери клиента, чтобы увидеть его персональную ленту</div>';
+  if (state.selectedClient) {
+    const client = state.clients.find(c => c.id === state.selectedClient);
+    const items = state.events
+      .map(e => ({ e, imp: (state.impacts[e.id] ?? []).find(i => i.clientProfileId === state.selectedClient) }))
+      .filter(x => x.imp);
+    body = items.length ? items.map(({ e, imp }) => {
+      const doc = state.documents.find(d => d.id === e.documentId);
+      return `<div class="notice">
+        <div class="row" style="margin-bottom:8px">
+          <span class="badge ${imp.impactLevel}">${imp.impactLevel}</span>
+          <b>${esc(e.title)}</b>
+        </div>
+        <p>${esc(e.summary.slice(0, 300))}${e.summary.length > 300 ? '…' : ''}</p>
+        <p style="margin-top:8px">Почему это касается вас: <b>${esc(imp.explanation ?? '')}</b></p>
+        ${e.effectiveDate ? `<p class="muted" style="margin-top:4px">Вступает в силу: ${fmtDate(e.effectiveDate)}</p>` : ''}
+        ${doc?.originalUrl ? `<p style="margin-top:4px"><a href="${esc(doc.originalUrl)}" target="_blank">Первоисточник ↗</a></p>` : ''}
+      </div>`;
+    }).join('') : `<div class="empty">Для «${esc(client.companyName)}» релевантных изменений нет 🎉</div>`;
+  }
+  return `
+    <div class="filters">
+      <select onchange="state.selectedClient=this.value; render()" style="min-width:300px">
+        <option value="">— выбери клиента —</option>${options}
+      </select>
+    </div>
+    ${body}`;
+}
+
+async function notify(eventId, clientId, btn) {
+  btn.disabled = true;
+  const res = await api('/api/notifications/send', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ regulatoryEventId: eventId, clientProfileId: clientId }),
+  });
+  btn.disabled = false;
+  if (res.ok) {
+    toast(`Уведомление: ${res.data.status} (канал ${res.data.channel})`, 'ok');
+    state.notifications.unshift(res.data);
+    const box = document.getElementById('notify-result');
+    if (box) box.innerHTML = `<details open><summary>Payload последнего уведомления</summary>
+      <pre>${esc(JSON.stringify(JSON.parse(res.data.payload ?? '{}'), null, 2))}</pre></details>`;
+  } else {
+    toast('Ошибка отправки: ' + (res.data?.error ?? res.status), 'err');
+  }
+}
+
+async function recalc(eventId, btn) {
+  btn.disabled = true;
+  const res = await api(`/api/regulatoryevents/${eventId}/impacts/recalculate`, { method: 'POST' });
+  btn.disabled = false;
+  if (res.ok) {
+    state.impacts[eventId] = res.data;
+    toast(`Влияние пересчитано: затронуто ${res.data.length}`, 'ok');
+    render();
+  } else {
+    toast('Ошибка пересчёта', 'err');
+  }
+}
+
+async function reprocess(docId, btn) {
+  btn.disabled = true;
+  const res = await api(`/api/documents/${docId}/reprocess`, { method: 'POST' });
+  if (res.ok) {
+    toast('AI-шаг выполнен повторно', 'ok');
+    await loadAll();
+    render();
+  } else {
+    btn.disabled = false;
+    toast('Не удалось: ' + (res.data?.error ?? res.status), 'err');
+  }
+}
+
+document.getElementById('btn-ingest').onclick = async function () {
+  this.disabled = true; this.textContent = 'Обновляем…';
+  const res = await api('/api/ingestion/run', { method: 'POST' });
+  this.disabled = false; this.textContent = 'Обновить из источников';
+  if (res.ok) {
+    const summary = res.data.map(r => `${r.source}: ${r.added ?? ('ошибка — ' + r.error)}`).join(', ');
+    toast('Ingestion: ' + summary, 'ok');
+    await loadAll();
+    render();
+  } else {
+    toast('Ошибка ingestion', 'err');
+  }
+};
+
+document.getElementById('btn-upload').onclick = () => document.getElementById('file-input').click();
+document.getElementById('file-input').onchange = async function () {
+  const file = this.files[0];
+  if (!file) return;
+  this.value = '';
+  const form = new FormData();
+  form.append('file', file);
+  const res = await api('/api/documents/upload', { method: 'POST', body: form });
+  if (res.status === 201) toast('Документ загружен и обработан', 'ok');
+  else if (res.status === 409) toast('Такой документ уже есть (дедупликация по хэшу)', 'err');
+  else toast('Ошибка: ' + (res.data?.error ?? res.status), 'err');
+  await loadAll();
+  render();
+};
+
+(async function init() {
+  await loadAll();
+  render();
+})();
+</script>
+</body>
+</html>
