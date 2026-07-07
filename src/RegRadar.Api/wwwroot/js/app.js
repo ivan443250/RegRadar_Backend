@@ -8,6 +8,7 @@ const state = {
   notificationsSearch: '',
   chatMode: 'lawyer',
   chatDocId: '',
+  chatDocSearch: '',
   chatHistory: [],
   chatLoading: false,
   composeResult: {},
@@ -831,13 +832,45 @@ function setChatMode(mode) {
 }
 
 function setChatDoc(docId) {
+  if (state.chatDocId === docId) return;
   state.chatDocId = docId;
   state.chatHistory = [];
   route();
 }
 
+function updateChatDocSearch(value) {
+  state.chatDocSearch = value;
+  const list = document.getElementById('doc-picker-list');
+  if (list) list.innerHTML = docPickerItems();
+}
+
 function chatAudience() {
   return state.chatMode === 'plain' ? 'client' : 'bank_employee';
+}
+
+function analyzedChatDocs() {
+  return state.documents
+    .filter(d => state.events.some(e => e.documentId === d.id))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+function docPickerItems() {
+  const q = state.chatDocSearch.trim().toLowerCase();
+  const docs = analyzedChatDocs().filter(d =>
+    !q || d.title.toLowerCase().includes(q) || (d.regulator ?? '').toLowerCase().includes(q));
+
+  if (!docs.length)
+    return '<div class="empty-state" style="padding:24px 12px">Документы не найдены</div>';
+
+  return docs.map(d => {
+    const ev = state.events.find(e => e.documentId === d.id);
+    const meta = [d.regulator, ev?.impactScore != null ? 'скор ' + ev.impactScore : null]
+      .filter(Boolean).join(' · ') || fmtDate(d.createdAt);
+    return `<div class="doc-item ${d.id === state.chatDocId ? 'active' : ''}" onclick="setChatDoc('${d.id}')">
+      <span class="di-title">${esc(d.title)}</span>
+      <span class="di-meta">${esc(meta)}</span>
+    </div>`;
+  }).join('');
 }
 
 function renderChatMessage(m) {
@@ -865,18 +898,16 @@ function renderChat() {
     if ((i === 0 && state.chatMode === 'lawyer') || (i === 1 && state.chatMode === 'plain')) b.classList.add('chip', 'active');
   });
 
-  const analyzedDocs = state.documents.filter(d => state.events.some(e => e.documentId === d.id));
-  if (!state.chatDocId && analyzedDocs[0]) state.chatDocId = analyzedDocs[0].id;
+  const analyzedDocs = analyzedChatDocs();
+  if ((!state.chatDocId || !analyzedDocs.some(d => d.id === state.chatDocId)) && analyzedDocs[0])
+    state.chatDocId = analyzedDocs[0].id;
   const currentDoc = state.documents.find(d => d.id === state.chatDocId);
-
-  const docOptions = analyzedDocs.map(d =>
-    `<option value="${d.id}" ${d.id === state.chatDocId ? 'selected' : ''}>${esc(d.title.slice(0, 60))}</option>`).join('');
 
   const lastAnswer = [...state.chatHistory].reverse().find(m => m.role === 'answer')?.answer;
   const sources = lastAnswer?.sources ?? [];
 
   const thread = state.chatHistory.map(renderChatMessage).join('') ||
-    '<div class="empty-state">Задайте вопрос по выбранному документу — ответ будет основан только на его фрагментах</div>';
+    '<div class="empty-state">Выберите документ слева и задайте вопрос — ответ будет основан только на его фрагментах</div>';
 
   const sourcesRows = sources.length
     ? sources.map((s, i) => `
@@ -886,17 +917,29 @@ function renderChat() {
       </div>`).join('')
     : '<div class="empty-state" style="padding:16px">Источники появятся после первого ответа</div>';
 
+  const docPicker = `
+    <div class="card doc-picker">
+      <div class="dp-title">Документы (${analyzedDocs.length})</div>
+      <div class="doc-picker-search">
+        ${icon('icon-search')}
+        <input id="doc-picker-input" placeholder="Поиск документа…" value="${esc(state.chatDocSearch)}"
+          oninput="updateChatDocSearch(this.value)">
+      </div>
+      <div class="doc-picker-list" id="doc-picker-list">${docPickerItems()}</div>
+    </div>`;
+
   document.getElementById('page').innerHTML = `
     <div class="rag-body">
+      ${docPicker}
       <div class="card chat-panel">
         <div class="chat-context-bar">
-          <div><div class="ctx-title">Контекст ответа</div><div class="ctx-sub">Документ, по которому идёт диалог</div></div>
-          <select onchange="setChatDoc(this.value)">${docOptions || '<option value="">нет обработанных документов</option>'}</select>
+          <div><div class="ctx-title">${esc(currentDoc?.title ?? 'Документ не выбран')}</div><div class="ctx-sub">${currentDoc ? esc(currentDoc.regulator ?? 'Диалог по документу') : 'Загрузите и обработайте документ'}</div></div>
+          <span class="badge ${sources.length ? 'badge-positive' : 'badge-info'}">${sources.length ? sources.length + ' источн.' : 'нет ответа'}</span>
         </div>
         <div class="chat-thread">${thread}${state.chatLoading ? '<div class="chat-loading">RegRadar анализирует фрагменты…</div>' : ''}</div>
         <div class="chat-input-bar">
-          <input id="chat-input" placeholder="Задайте вопрос по изменению, клиенту или источнику…" ${state.chatLoading ? 'disabled' : ''}>
-          <button class="chat-send-btn" onclick="sendChatQuestion()" ${state.chatLoading ? 'disabled' : ''}>Отправить</button>
+          <input id="chat-input" placeholder="Задайте вопрос по изменению, клиенту или источнику…" ${state.chatLoading || !currentDoc ? 'disabled' : ''}>
+          <button class="chat-send-btn" onclick="sendChatQuestion()" ${state.chatLoading || !currentDoc ? 'disabled' : ''}>Отправить</button>
         </div>
       </div>
       <div class="detail-side-col">
