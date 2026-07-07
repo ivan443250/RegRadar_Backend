@@ -12,4 +12,10 @@ public record RegulatoryEventDto(
     DateOnly? EffectiveDate,
     EventStatus Status,
     List<string> Tags,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    int? ImpactScore,
+    string? Urgency,
+    string? Domain,
+    string? ReviewState,
+    bool ReviewRequired,
+    AiAnalysisDetails? AiDetails);

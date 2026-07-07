@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 
 using RegRadar.Application.Abstractions;
 using RegRadar.Application.Dtos;
+using RegRadar.Application.Serialization;
 using RegRadar.Domain.Entities;
 using RegRadar.Domain.Enums;
 using RegRadar.Infrastructure.Persistence;
@@ -114,7 +115,11 @@ public class DocumentProcessingService(
 
             logger.LogInformation("Document {DocumentId} processed from {FileName}: {ChunkCount} chunks", document.Id, request.FileName, chunks.Count);
 
-            await RunAiAnalysisAsync(document, normalized, ct);
+            List<AiAnalysisChunk> aiChunks = [.. version.Chunks
+                .OrderBy(c => c.ChunkIndex)
+                .Select(c => new AiAnalysisChunk(c.Id, c.ChunkIndex, c.Content))];
+
+            await RunAiAnalysisAsync(document, normalized, aiChunks, ct);
 
             return DocumentUploadResult.Created(document.Id);
         }
@@ -191,14 +196,20 @@ public class DocumentProcessingService(
         if (hasEvent)
             return DocumentUploadResult.Duplicate(documentId);
 
-        string? text = await db.DocumentVersions
+        var version = await db.DocumentVersions
             .Where(v => v.DocumentId == documentId)
             .OrderByDescending(v => v.VersionNumber)
-            .Select(v => v.Text)
+            .Select(v => new { v.Id, v.Text })
             .FirstOrDefaultAsync(ct);
 
-        if (text is null)
+        if (version is null)
             return DocumentUploadResult.Failed("Document has no extracted version.");
+
+        List<AiAnalysisChunk> aiChunks = await db.DocumentChunks
+            .Where(c => c.DocumentVersionId == version.Id)
+            .OrderBy(c => c.ChunkIndex)
+            .Select(c => new AiAnalysisChunk(c.Id, c.ChunkIndex, c.Content))
+            .ToListAsync(ct);
 
         db.AuditLogs.Add(new AuditLog
         {
@@ -209,14 +220,14 @@ public class DocumentProcessingService(
         });
         await db.SaveChangesAsync(ct);
 
-        await RunAiAnalysisAsync(document, text, ct);
+        await RunAiAnalysisAsync(document, version.Text, aiChunks, ct);
 
         return document.ProcessingStatus == ProcessingStatus.Completed
             ? DocumentUploadResult.Created(documentId)
             : DocumentUploadResult.Failed("AI processing failed, see processing jobs.");
     }
 
-    private async Task RunAiAnalysisAsync(Document document, string text, CancellationToken ct)
+    private async Task RunAiAnalysisAsync(Document document, string text, IReadOnlyList<AiAnalysisChunk> chunks, CancellationToken ct)
     {
         int attempts = await db.ProcessingJobs
             .CountAsync(j => j.DocumentId == document.Id && j.Type == JobType.AiProcessing, ct) + 1;
@@ -237,7 +248,15 @@ public class DocumentProcessingService(
         try
         {
             document.ProcessingStatus = ProcessingStatus.Processing;
-            AiAnalysisResult result = await ai.AnalyzeAsync(document.Title, text, ct);
+
+            List<ClientProfileDto> clients = await db.ClientProfiles.AsNoTracking()
+                .Select(c => new ClientProfileDto(c.Id, c.CompanyName, c.Okved, c.Industry, c.Size,
+                    c.HasForeignTrade, c.UsesOnlinePayments, c.HandlesPersonalData,
+                    c.CashOperationsLevel, c.RiskProfile, c.BankSegment))
+                .ToListAsync(ct);
+
+            AiAnalysisRequest aiRequest = new(document.Id, document.Title, text, chunks, clients);
+            AiAnalysisResult result = await ai.AnalyzeAsync(aiRequest, ct);
             sw.Stop();
 
             db.LlmCallLogs.Add(new LLMCallLog
@@ -260,7 +279,13 @@ public class DocumentProcessingService(
                 ImpactLevel = result.ImpactLevel,
                 ImpactExplanation = result.ImpactExplanation,
                 EffectiveDate = result.EffectiveDate,
-                Tags = [.. result.Tags]
+                Tags = [.. result.Tags],
+                ImpactScore = result.Details?.ImpactScore,
+                Urgency = result.Details?.Urgency,
+                Domain = result.Details?.Domain,
+                ReviewState = result.Details?.Review?.State,
+                ReviewRequired = result.Details?.Review?.Required ?? false,
+                AiDetailsJson = result.Details is null ? null : AiDetailsSerializer.Serialize(result.Details)
             };
             db.RegulatoryEvents.Add(regulatoryEvent);
 

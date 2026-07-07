@@ -19,6 +19,13 @@ public class RegulatoryEvent : BaseEntity
 
     public List<string> Tags { get; set; } = new();
 
+    public int? ImpactScore { get; set; }
+    public string? Urgency { get; set; }
+    public string? Domain { get; set; }
+    public string? ReviewState { get; set; }
+    public bool ReviewRequired { get; set; }
+    public string? AiDetailsJson { get; set; }
+
     public ICollection<ClientImpact> ClientImpacts { get; set; } = new List<ClientImpact>();
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 }

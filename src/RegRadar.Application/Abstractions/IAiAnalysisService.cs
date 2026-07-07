@@ -8,5 +8,5 @@ public interface IAiAnalysisService
     string ModelName { get; }
     string PromptVersion { get; }
 
-    Task<AiAnalysisResult> AnalyzeAsync(string title, string text, CancellationToken ct = default);
+    Task<AiAnalysisResult> AnalyzeAsync(AiAnalysisRequest request, CancellationToken ct = default);
 }

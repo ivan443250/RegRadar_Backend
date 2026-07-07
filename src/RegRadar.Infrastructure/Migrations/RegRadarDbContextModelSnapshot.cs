@@ -419,11 +419,18 @@ namespace RegRadar.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AiDetailsJson")
+                        .HasColumnType("jsonb");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("DocumentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Domain")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateOnly?>("EffectiveDate")
                         .HasColumnType("date");
@@ -434,6 +441,16 @@ namespace RegRadar.Infrastructure.Migrations
                     b.Property<string>("ImpactLevel")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("ImpactScore")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("ReviewRequired")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ReviewState")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -454,6 +471,10 @@ namespace RegRadar.Infrastructure.Migrations
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Urgency")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.HasKey("Id");
 

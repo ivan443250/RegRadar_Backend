@@ -1,0 +1,253 @@
+[
+  {
+    "client_id": "ecommerce_1",
+    "company_name": "ООО «Онлайн Маркет»",
+    "industry": "ecommerce",
+    "size": "medium",
+    "has_foreign_trade": false,
+    "uses_online_payments": true,
+    "handles_personal_data": true,
+    "cash_operations_level": "low",
+    "risk_profile": "medium",
+    "bank_segment": "sme",
+    "tags": [
+      "ecommerce",
+      "personal_data",
+      "online_payments",
+      "acquiring"
+    ]
+  },
+  {
+    "client_id": "saas_1",
+    "company_name": "ООО «Облачный Сервис»",
+    "industry": "saas",
+    "size": "small",
+    "has_foreign_trade": false,
+    "uses_online_payments": true,
+    "handles_personal_data": true,
+    "cash_operations_level": "low",
+    "risk_profile": "low",
+    "bank_segment": "sme",
+    "tags": [
+      "saas",
+      "personal_data",
+      "online_service",
+      "it_system"
+    ]
+  },
+  {
+    "client_id": "importer_1",
+    "company_name": "ООО «Импорт Логистика»",
+    "industry": "wholesale_trade",
+    "size": "medium",
+    "has_foreign_trade": true,
+    "uses_online_payments": false,
+    "handles_personal_data": false,
+    "cash_operations_level": "low",
+    "risk_profile": "medium",
+    "bank_segment": "corporate",
+    "tags": [
+      "foreign_trade",
+      "import",
+      "currency_control",
+      "customs"
+    ]
+  },
+  {
+    "client_id": "exporter_1",
+    "company_name": "АО «ЭкспортПром»",
+    "industry": "manufacturing",
+    "size": "large",
+    "has_foreign_trade": true,
+    "uses_online_payments": false,
+    "handles_personal_data": false,
+    "cash_operations_level": "low",
+    "risk_profile": "medium",
+    "bank_segment": "corporate",
+    "tags": [
+      "foreign_trade",
+      "export",
+      "currency_control"
+    ]
+  },
+  {
+    "client_id": "cash_retail_1",
+    "company_name": "ООО «Розница Наличные»",
+    "industry": "retail",
+    "size": "medium",
+    "has_foreign_trade": false,
+    "uses_online_payments": true,
+    "handles_personal_data": false,
+    "cash_operations_level": "high",
+    "risk_profile": "high",
+    "bank_segment": "sme",
+    "tags": [
+      "cash_heavy",
+      "aml_risk",
+      "retail"
+    ]
+  },
+  {
+    "client_id": "broker_1",
+    "company_name": "АО «Брокер Плюс»",
+    "industry": "securities",
+    "size": "medium",
+    "has_foreign_trade": false,
+    "uses_online_payments": false,
+    "handles_personal_data": true,
+    "cash_operations_level": "low",
+    "risk_profile": "medium",
+    "bank_segment": "corporate",
+    "tags": [
+      "broker",
+      "securities_market",
+      "exchange_trading",
+      "issuer"
+    ]
+  },
+  {
+    "client_id": "cfa_platform_1",
+    "company_name": "ООО «ЦФА Платформа»",
+    "industry": "financial_market",
+    "size": "medium",
+    "has_foreign_trade": false,
+    "uses_online_payments": true,
+    "handles_personal_data": true,
+    "cash_operations_level": "low",
+    "risk_profile": "medium",
+    "bank_segment": "corporate",
+    "tags": [
+      "cfa",
+      "investment_platform",
+      "financial_service",
+      "digital_platform"
+    ]
+  },
+  {
+    "client_id": "fuel_trade_1",
+    "company_name": "ООО «Топливный Трейдер»",
+    "industry": "fuel_trade",
+    "size": "medium",
+    "has_foreign_trade": false,
+    "uses_online_payments": false,
+    "handles_personal_data": false,
+    "cash_operations_level": "medium",
+    "risk_profile": "medium",
+    "bank_segment": "corporate",
+    "tags": [
+      "fuel",
+      "oil_products",
+      "excise",
+      "exchange_trading"
+    ]
+  },
+  {
+    "client_id": "oil_processing_1",
+    "company_name": "АО «НефтеПереработка»",
+    "industry": "oil_processing",
+    "size": "large",
+    "has_foreign_trade": true,
+    "uses_online_payments": false,
+    "handles_personal_data": false,
+    "cash_operations_level": "low",
+    "risk_profile": "medium",
+    "bank_segment": "corporate",
+    "tags": [
+      "oil_processing",
+      "petroleum",
+      "excise",
+      "fuel",
+      "foreign_trade"
+    ]
+  },
+  {
+    "client_id": "payment_service_1",
+    "company_name": "ООО «Платежный Сервис»",
+    "industry": "payments",
+    "size": "medium",
+    "has_foreign_trade": false,
+    "uses_online_payments": true,
+    "handles_personal_data": true,
+    "cash_operations_level": "low",
+    "risk_profile": "medium",
+    "bank_segment": "corporate",
+    "tags": [
+      "payment_service",
+      "operator_transfer",
+      "electronic_money",
+      "acquiring",
+      "sbp",
+      "digital_ruble"
+    ]
+  },
+  {
+    "client_id": "bank_lending_1",
+    "company_name": "АО «Банк Кредит»",
+    "industry": "banking",
+    "size": "large",
+    "has_foreign_trade": false,
+    "uses_online_payments": true,
+    "handles_personal_data": true,
+    "cash_operations_level": "medium",
+    "risk_profile": "medium",
+    "bank_segment": "financial_org",
+    "tags": [
+      "bank",
+      "lending",
+      "consumer_credit",
+      "payment_service",
+      "aml_risk"
+    ]
+  },
+  {
+    "client_id": "medical_devices_1",
+    "company_name": "ООО «МедИмпорт»",
+    "industry": "medical_devices",
+    "size": "medium",
+    "has_foreign_trade": true,
+    "uses_online_payments": false,
+    "handles_personal_data": false,
+    "cash_operations_level": "low",
+    "risk_profile": "medium",
+    "bank_segment": "corporate",
+    "tags": [
+      "medical_devices",
+      "product_marking",
+      "import",
+      "wholesale"
+    ]
+  },
+  {
+    "client_id": "tax_sensitive_1",
+    "company_name": "ООО «Бухгалтерия Плюс»",
+    "industry": "accounting",
+    "size": "small",
+    "has_foreign_trade": false,
+    "uses_online_payments": false,
+    "handles_personal_data": true,
+    "cash_operations_level": "low",
+    "risk_profile": "low",
+    "bank_segment": "sme",
+    "tags": [
+      "tax_reporting",
+      "accounting",
+      "corporate_tax"
+    ]
+  },
+  {
+    "client_id": "neutral_cafe_1",
+    "company_name": "ООО «Кафе Ромашка»",
+    "industry": "restaurant",
+    "size": "small",
+    "has_foreign_trade": false,
+    "uses_online_payments": true,
+    "handles_personal_data": false,
+    "cash_operations_level": "medium",
+    "risk_profile": "low",
+    "bank_segment": "sme",
+    "tags": [
+      "restaurant",
+      "neutral"
+    ]
+  }
+]

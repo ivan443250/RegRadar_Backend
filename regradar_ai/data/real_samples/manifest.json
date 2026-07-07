@@ -1,0 +1,1463 @@
+[
+  {
+    "id": "001_personal_data_1066_2022",
+    "filename": "001_personal_data_1066_2022.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "1.txt",
+    "document_title": "Постановление Правительства Российской Федерации от 15.06.2022 № 1066 \"О размещении физическими лицами своих биометрических персональных данных в единой информационной системе персональных данных, обеспечивающей обработку, включая сбор и хранение, биометрических персональных данных, их проверку и передачу информации о степени их соответствия предоставленным биометрическим персональным данным физического лица\"",
+    "document_date": "2022-06-17",
+    "document_type_expected": "постановление",
+    "domain_expected": "personal_data",
+    "topics_expected": [
+      "персональные данные",
+      "биометрия",
+      "идентификация"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "personal_data",
+      "biometrics",
+      "ecommerce",
+      "saas",
+      "online_service"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "securities_market",
+      "restaurant_no_pd"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "персональных данных",
+      "биометрических персональных данных"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "002_personal_data_1046_2021",
+    "filename": "002_personal_data_1046_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "2.txt",
+    "document_title": "Постановление Правительства Российской Федерации от 29.06.2021 № 1046 \"О федеральном государственном контроле (надзоре) за обработкой персональных данных\"",
+    "document_date": "2021-06-30",
+    "document_type_expected": "постановление",
+    "domain_expected": "personal_data",
+    "topics_expected": [
+      "персональные данные",
+      "биометрия",
+      "идентификация"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "personal_data",
+      "biometrics",
+      "ecommerce",
+      "saas",
+      "online_service"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "securities_market",
+      "restaurant_no_pd"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "персональных данных",
+      "обработкой персональных данных"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "003_personal_data_1801_2021",
+    "filename": "003_personal_data_1801_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#31",
+    "document_title": "Постановление Правительства Российской Федерации от 20.10.2021 № 1801 \"Об утверждении Правил идентификации пользователей информационно-телекоммуникационной сети \"Интернет\" организатором сервиса обмена мгновенными сообщениями\"",
+    "document_date": "2021-10-21",
+    "document_type_expected": "постановление",
+    "domain_expected": "personal_data",
+    "topics_expected": [
+      "персональные данные",
+      "биометрия",
+      "идентификация"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "personal_data",
+      "biometrics",
+      "ecommerce",
+      "saas",
+      "online_service"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "securities_market",
+      "restaurant_no_pd"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "идентификацию пользователей"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "004_aml_105-fz_2025",
+    "filename": "004_aml_105-fz_2025.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#10",
+    "document_title": "Федеральный закон от 23.05.2025 № 105-ФЗ \"О внесении изменений в отдельные законодательные акты Российской Федерации\"",
+    "document_date": "2025-05-23",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "aml",
+    "topics_expected": [
+      "ПОД/ФТ",
+      "идентификация клиентов",
+      "подозрительные операции"
+    ],
+    "impact_level_expected": "high",
+    "relevant_client_tags": [
+      "aml_risk",
+      "cash_heavy",
+      "bank",
+      "payment_service",
+      "foreign_financial_org"
+    ],
+    "non_relevant_client_tags": [
+      "neutral",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "противодействии легализации",
+      "финансированию терроризма",
+      "внесены изменения"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "005_aml_165-fz_2021",
+    "filename": "005_aml_165-fz_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "5.txt",
+    "document_title": "Федеральный закон от 11.06.2021 № 165-ФЗ \"О внесении изменений в Федеральный закон \"О противодействии легализации (отмыванию) доходов, полученных преступным путем, и финансированию терроризма\"",
+    "document_date": "2021-06-11",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "aml",
+    "topics_expected": [
+      "ПОД/ФТ",
+      "идентификация клиентов",
+      "подозрительные операции"
+    ],
+    "impact_level_expected": "high",
+    "relevant_client_tags": [
+      "aml_risk",
+      "cash_heavy",
+      "bank",
+      "payment_service",
+      "foreign_financial_org"
+    ],
+    "non_relevant_client_tags": [
+      "neutral",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "противодействии легализации",
+      "финансированию терроризма",
+      "оружия массового уничтожения"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "006_aml_2838-r_2023",
+    "filename": "006_aml_2838-r_2023.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "6.txt",
+    "document_title": "Распоряжение Правительства Российской Федерации от 14.10.2023 № 2838-р",
+    "document_date": "2023-10-24",
+    "document_type_expected": "распоряжение",
+    "domain_expected": "aml",
+    "topics_expected": [
+      "ПОД/ФТ",
+      "идентификация клиентов",
+      "подозрительные операции"
+    ],
+    "impact_level_expected": "high",
+    "relevant_client_tags": [
+      "aml_risk",
+      "cash_heavy",
+      "bank",
+      "payment_service",
+      "foreign_financial_org"
+    ],
+    "non_relevant_client_tags": [
+      "neutral",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "идентификации клиента",
+      "бенефициарного владельца"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "007_aml_423-fz_2021",
+    "filename": "007_aml_423-fz_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "8.txt",
+    "document_title": "Федеральный закон от 21.12.2021 № 423-ФЗ \"О внесении изменений в отдельные законодательные акты Российской Федерации\"",
+    "document_date": "2021-12-21",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "aml",
+    "topics_expected": [
+      "ПОД/ФТ",
+      "идентификация клиентов",
+      "подозрительные операции"
+    ],
+    "impact_level_expected": "high",
+    "relevant_client_tags": [
+      "aml_risk",
+      "cash_heavy",
+      "bank",
+      "payment_service",
+      "foreign_financial_org"
+    ],
+    "non_relevant_client_tags": [
+      "neutral",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "подозрительных операций"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "008_foreign_trade_currency_control_821_2022",
+    "filename": "008_foreign_trade_currency_control_821_2022.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "12.txt",
+    "document_title": "Постановление Правительства Российской Федерации от 06.05.2022 № 821 \"О внесении изменений в Правила осуществления акционерным обществом \"Российский экспортный центр\" деятельности по поддержке экспорта и импорта, а также взаимодействия с федеральными органами исполнительной власти, органами и агентами валютного контроля и Государственной корпорацией по атомной энергии \"Росатом\"",
+    "document_date": "2022-05-07",
+    "document_type_expected": "постановление",
+    "domain_expected": "foreign_trade_currency_control",
+    "topics_expected": [
+      "ВЭД",
+      "валютное регулирование",
+      "валютный контроль",
+      "экспорт",
+      "импорт"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "foreign_trade",
+      "import",
+      "export",
+      "currency_control",
+      "customs"
+    ],
+    "non_relevant_client_tags": [
+      "saas_local",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "валютного контроля",
+      "экспорта и импорта",
+      "внешнеторговой деятельности"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "009_foreign_trade_currency_control_2020_2021",
+    "filename": "009_foreign_trade_currency_control_2020_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#40",
+    "document_title": "Постановление Правительства Российской Федерации от 24.11.2021 № 2020 \"Об утверждении Правил проверки (идентификации) таможенным органом охранной маркировки на музыкальных инструментах или смычках, включенных в состав Музейного фонда Российской Федерации, маркировки, нанесенной в соответствии со статьей 35.13 Закона Российской Федерации \"О вывозе и ввозе культурных ценностей\", а также паспортов и заключений (разрешительных документов) на временный вывоз музыкальных инструментов или смычков\"",
+    "document_date": "2021-11-26",
+    "document_type_expected": "постановление",
+    "domain_expected": "foreign_trade_currency_control",
+    "topics_expected": [
+      "ВЭД",
+      "валютное регулирование",
+      "валютный контроль",
+      "экспорт",
+      "импорт"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "foreign_trade",
+      "import",
+      "export",
+      "currency_control",
+      "customs"
+    ],
+    "non_relevant_client_tags": [
+      "saas_local",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "таможенным органом"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "010_foreign_trade_currency_control_214-rp_2023",
+    "filename": "010_foreign_trade_currency_control_214-rp_2023.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "10.txt",
+    "document_title": "Распоряжение Президента Российской Федерации от 03.07.2023 № 214-рп \"О внесении изменений в состав межведомственной рабочей группы по выработке новых механизмов в сфере валютного регулирования и международных расчетов, утвержденный распоряжением Президента Российской Федерации от 9 мая 2022 г. № 134-рп\"",
+    "document_date": "2023-07-03",
+    "document_type_expected": "распоряжение президента",
+    "domain_expected": "foreign_trade_currency_control",
+    "topics_expected": [
+      "ВЭД",
+      "валютное регулирование",
+      "валютный контроль",
+      "экспорт",
+      "импорт"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "foreign_trade",
+      "import",
+      "export",
+      "currency_control",
+      "customs"
+    ],
+    "non_relevant_client_tags": [
+      "saas_local",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "валютного регулирования"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "011_financial_market_securities_469_2026",
+    "filename": "011_financial_market_securities_469_2026.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "previous RegRadar test sample",
+    "source_file_original": "previous:ukaz_469_public_securities_2026.txt",
+    "document_title": "Указ Президента Российской Федерации от 02.07.2026 № 469 \"О временных мерах, связанных с публичным обращением ценных бумаг\"",
+    "document_date": "2026-07-02",
+    "document_type_expected": "указ",
+    "domain_expected": "financial_market_securities",
+    "topics_expected": [
+      "финансовый рынок",
+      "ценные бумаги",
+      "инвестиционные инструменты"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "broker",
+      "securities_market",
+      "issuer",
+      "investment_platform",
+      "cfa"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "restaurant",
+      "fuel"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "рынке ценных бумаг",
+      "вступает в силу"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "012_fuel_excise_825_2026",
+    "filename": "012_fuel_excise_825_2026.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "previous RegRadar test sample",
+    "source_file_original": "previous:postanovlenie_825_fuel_excise_2026.txt",
+    "document_title": "Постановление Правительства Российской Федерации от 02.07.2026 № 825 \"О внесении изменений в постановление Правительства Российской Федерации от 29 апреля 2021 г. № 669\"",
+    "document_date": "2026-07-02",
+    "document_type_expected": "постановление",
+    "domain_expected": "fuel_excise",
+    "topics_expected": [
+      "топливный рынок",
+      "нефтепереработка",
+      "акцизы",
+      "биржевые торги"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "fuel",
+      "oil_products",
+      "oil_processing",
+      "excise",
+      "exchange_trading"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "автомобильного бензина",
+      "дизельного топлива",
+      "нефтяного сырья",
+      "акциз",
+      "налогового периода по акцизам"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "013_fuel_excise_623_2022",
+    "filename": "013_fuel_excise_623_2022.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#01",
+    "document_title": "Постановление Правительства Российской Федерации от 08.04.2022 № 623 \"О приостановлении действия пункта 7 Правил определения минимальной величины объема автомобильного бензина класса 5 и (или) дизельного топлива класса 5, произведенных в том числе по договору об оказании налогоплательщику услуг по переработке нефтяного сырья и реализованных налогоплательщиком, имеющим свидетельство о регистрации лица, совершающего операции по переработке нефтяного сырья, и (или) иным лицом, входящим в одну группу лиц с таким налогоплательщиком в соответствии с антимонопольным законодательством Российской Федерации, в налоговом периоде на биржевых торгах, проводимых биржей (биржами)\"",
+    "document_date": "2022-04-11",
+    "document_type_expected": "постановление",
+    "domain_expected": "fuel_excise",
+    "topics_expected": [
+      "топливный рынок",
+      "нефтепереработка",
+      "акцизы",
+      "биржевые торги"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "fuel",
+      "oil_products",
+      "oil_processing",
+      "excise",
+      "exchange_trading"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "автомобильного бензина",
+      "дизельного топлива",
+      "нефтяного сырья",
+      "биржевых торгах"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "014_fuel_excise_1728_2021",
+    "filename": "014_fuel_excise_1728_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#09",
+    "document_title": "Постановление Правительства Российской Федерации от 11.10.2021 № 1728 \"О внесении изменений в постановление Правительства Российской Федерации от 10 марта 2021 г. № 341\"",
+    "document_date": "2021-10-13",
+    "document_type_expected": "постановление",
+    "domain_expected": "fuel_excise",
+    "topics_expected": [
+      "топливный рынок",
+      "нефтепереработка",
+      "акцизы",
+      "биржевые торги"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "fuel",
+      "oil_products",
+      "oil_processing",
+      "excise",
+      "exchange_trading"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "акциз",
+      "налогового периода по акцизам",
+      "вступает в силу",
+      "внесены изменения"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "015_fuel_excise_520-fz_2023",
+    "filename": "015_fuel_excise_520-fz_2023.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#02",
+    "document_title": "Федеральный закон от 02.11.2023 № 520-ФЗ \"О внесении изменений в статьи 96-6 и 220-1 Бюджетного кодекса Российской Федерации и отдельные законодательные акты Российской Федерации, приостановлении действия отдельных положений Бюджетного кодекса Российской Федерации и об установлении особенностей исполнения бюджетов бюджетной системы Российской Федерации в 2024 году\"",
+    "document_date": "2023-11-02",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "fuel_excise",
+    "topics_expected": [
+      "топливный рынок",
+      "нефтепереработка",
+      "акцизы",
+      "биржевые торги"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "fuel",
+      "oil_products",
+      "oil_processing",
+      "excise",
+      "exchange_trading"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "автомобильного бензина",
+      "дизельного топлива"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "016_fuel_excise_136-fz_2023",
+    "filename": "016_fuel_excise_136-fz_2023.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#07",
+    "document_title": "Федеральный закон от 27.04.2023 № 136-ФЗ \"О внесении изменений в статьи 342-6 и 343-2 части второй Налогового кодекса Российской Федерации и статью 3-1 Закона Российской Федерации \"О таможенном тарифе\"",
+    "document_date": "2023-04-27",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "fuel_excise",
+    "topics_expected": [
+      "топливный рынок",
+      "нефтепереработка",
+      "акцизы",
+      "биржевые торги"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "fuel",
+      "oil_products",
+      "oil_processing",
+      "excise",
+      "exchange_trading"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "нефтяного сырья",
+      "нефть сырую"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "017_fuel_excise_1683_2025",
+    "filename": "017_fuel_excise_1683_2025.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#05",
+    "document_title": "Постановление Правительства Российской Федерации от 29.10.2025 № 1683 \"Об оказании поддержки отрасли черной металлургии\"",
+    "document_date": "2025-10-30",
+    "document_type_expected": "постановление",
+    "domain_expected": "fuel_excise",
+    "topics_expected": [
+      "топливный рынок",
+      "нефтепереработка",
+      "акцизы",
+      "биржевые торги"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "fuel",
+      "oil_products",
+      "oil_processing",
+      "excise",
+      "exchange_trading"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "акциз",
+      "срок"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "018_fuel_excise_2553_2023",
+    "filename": "018_fuel_excise_2553_2023.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#08",
+    "document_title": "Постановление Правительства Российской Федерации от 30.12.2022 № 2553 \"Об утверждении Правил формирования и использования бюджетных ассигнований федерального бюджета на финансовое обеспечение социально-экономического развития Арктической зоны Российской Федерации за счет налоговых поступлений от реализации на территории Арктической зоны Российской Федерации инвестиционных проектов и о внесении изменений в некоторые акты Правительства Российской Федерации\"",
+    "document_date": "2023-01-04",
+    "document_type_expected": "постановление",
+    "domain_expected": "fuel_excise",
+    "topics_expected": [
+      "топливный рынок",
+      "нефтепереработка",
+      "акцизы",
+      "биржевые торги"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "fuel",
+      "oil_products",
+      "oil_processing",
+      "excise",
+      "exchange_trading"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "акциз"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "019_fuel_excise_321-fz_2020",
+    "filename": "019_fuel_excise_321-fz_2020.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#04",
+    "document_title": "Федеральный закон от 15.10.2020 № 321-ФЗ \"О внесении изменений в часть вторую Налогового кодекса Российской Федерации в части введения обратного акциза на этан, сжиженные углеводородные газы и инвестиционного коэффициента, применяемого при определении размера обратного акциза на нефтяное сырье\"",
+    "document_date": "2020-10-15",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "fuel_excise",
+    "topics_expected": [
+      "топливный рынок",
+      "нефтепереработка",
+      "акцизы",
+      "биржевые торги"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "fuel",
+      "oil_products",
+      "oil_processing",
+      "excise",
+      "exchange_trading"
+    ],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "restaurant",
+      "personal_data_only"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "акциз"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "020_payments_digital_ruble_136_2026",
+    "filename": "020_payments_digital_ruble_136_2026.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#18",
+    "document_title": "Постановление Правительства Российской Федерации от 14.02.2026 № 136 \"Об утверждении Правил взаимодействия операторов по переводу денежных средств, операторов электронных денежных средств и операторов подвижной радиотелефонной связи с заинтересованными федеральными государственными органами\"",
+    "document_date": "2026-02-21",
+    "document_type_expected": "постановление",
+    "domain_expected": "payments_digital_ruble",
+    "topics_expected": [
+      "платежи",
+      "переводы денежных средств",
+      "цифровой рубль",
+      "банковские карты"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "payment_service",
+      "acquiring",
+      "sbp",
+      "digital_ruble",
+      "bank_card",
+      "operator_transfer"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "переводу денежных средств",
+      "операторов по переводу денежных средств",
+      "электронных денежных средств"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "021_payments_digital_ruble_1103_2021",
+    "filename": "021_payments_digital_ruble_1103_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#33",
+    "document_title": "Постановление Правительства Российской Федерации от 30.06.2021 № 1103 \"Об утверждении Правил предоставления субсидий из федерального бюджета российским кредитным организациям на возмещение затрат субъектам малого и среднего предпринимательства на оплату банковских комиссий при осуществлении перевода денежных средств физическими лицами в пользу субъектов малого и среднего предпринимательства в оплату товаров (работ, услуг) в сервисе быстрых платежей платежной системы Банка России\"",
+    "document_date": "2021-07-12",
+    "document_type_expected": "постановление",
+    "domain_expected": "payments_digital_ruble",
+    "topics_expected": [
+      "платежи",
+      "переводы денежных средств",
+      "цифровой рубль",
+      "банковские карты"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "payment_service",
+      "acquiring",
+      "sbp",
+      "digital_ruble",
+      "bank_card",
+      "operator_transfer"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "платежной системы Банка России",
+      "утверждены Правила"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "022_payments_digital_ruble_1200_2020",
+    "filename": "022_payments_digital_ruble_1200_2020.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#20",
+    "document_title": "Постановление Правительства Российской Федерации от 10.08.2020 № 1200 \"Об утверждении Правил предоставления в 2020 году из федерального бюджета субсидии акционерному обществу \"Национальная система платежных карт\" на стимулирование доступных внутренних туристических поездок через возмещение части стоимости оплаченной туристской услуги\"",
+    "document_date": "2020-08-11",
+    "document_type_expected": "постановление",
+    "domain_expected": "payments_digital_ruble",
+    "topics_expected": [
+      "платежи",
+      "переводы денежных средств",
+      "цифровой рубль",
+      "банковские карты"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "payment_service",
+      "acquiring",
+      "sbp",
+      "digital_ruble",
+      "bank_card",
+      "operator_transfer"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "национального платежного инструмента",
+      "срок"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "023_payments_digital_ruble_759_2021",
+    "filename": "023_payments_digital_ruble_759_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#19",
+    "document_title": "Постановление Правительства Российской Федерации от 19.05.2021 № 759 \"Об утверждении Правил предоставления в 2021 году из федерального бюджета субсидии акционерному обществу \"Национальная система платежных карт\" на реализацию программы поддержки доступных внутренних туристских поездок в организации отдыха детей и их оздоровления через возмещение части стоимости оплаченной туристской услуги\"",
+    "document_date": "2021-05-21",
+    "document_type_expected": "постановление",
+    "domain_expected": "payments_digital_ruble",
+    "topics_expected": [
+      "платежи",
+      "переводы денежных средств",
+      "цифровой рубль",
+      "банковские карты"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "payment_service",
+      "acquiring",
+      "sbp",
+      "digital_ruble",
+      "bank_card",
+      "operator_transfer"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "национального платежного инструмента",
+      "срок"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "024_payments_digital_ruble_72_2023",
+    "filename": "024_payments_digital_ruble_72_2023.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#34",
+    "document_title": "Указ Президента Российской Федерации от 06.02.2023 № 72 \"Об особом порядке проведения расчетов между некоторыми юридическими лицами - резидентами при осуществлении внешнеэкономической деятельности\"",
+    "document_date": "2023-02-06",
+    "document_type_expected": "указ",
+    "domain_expected": "payments_digital_ruble",
+    "topics_expected": [
+      "платежи",
+      "переводы денежных средств",
+      "цифровой рубль",
+      "банковские карты"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "payment_service",
+      "acquiring",
+      "sbp",
+      "digital_ruble",
+      "bank_card",
+      "operator_transfer"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "переводу денежных средств"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "025_lending_consumer_credit_9-fz_2025",
+    "filename": "025_lending_consumer_credit_9-fz_2025.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#14",
+    "document_title": "Федеральный закон от 13.02.2025 № 9-ФЗ \"О внесении изменений в отдельные законодательные акты Российской Федерации\"",
+    "document_date": "2025-02-13",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "lending_consumer_credit",
+    "topics_expected": [
+      "кредитование",
+      "потребительский кредит",
+      "банковская деятельность"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "bank",
+      "lending",
+      "consumer_credit",
+      "financial_service"
+    ],
+    "non_relevant_client_tags": [
+      "fuel",
+      "culture",
+      "restaurant"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "потребительского кредита",
+      "договора потребительского кредита",
+      "кредитная организация обязана фиксировать",
+      "внесены изменения"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "026_tax_reporting_371-fz_2021",
+    "filename": "026_tax_reporting_371-fz_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#24",
+    "document_title": "Федеральный закон от 19.11.2021 № 371-ФЗ \"О внесении изменений в статьи 25-12 и 25-12-1 части первой и статью 288-2 части второй Налогового кодекса Российской Федерации\"",
+    "document_date": "2021-11-19",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "tax_reporting",
+    "topics_expected": [
+      "налоги",
+      "налоговый контроль",
+      "отчетность",
+      "ФНС"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "tax_reporting",
+      "accounting",
+      "corporate_tax",
+      "investment_project",
+      "cash_declaration"
+    ],
+    "non_relevant_client_tags": [
+      "culture",
+      "education",
+      "health_social"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "Налогового кодекса",
+      "налоговой проверки",
+      "налога на прибыль",
+      "вступает в силу"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "027_tax_reporting_48-fz_2022",
+    "filename": "027_tax_reporting_48-fz_2022.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#23",
+    "document_title": "Федеральный закон от 09.03.2022 № 48-ФЗ \"О внесении изменений в Федеральный закон \"О добровольном декларировании физическими лицами активов и счетов (вкладов) в банках и о внесении изменений в отдельные законодательные акты Российской Федерации\"",
+    "document_date": "2022-03-09",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "tax_reporting",
+    "topics_expected": [
+      "налоги",
+      "налоговый контроль",
+      "отчетность",
+      "ФНС"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "tax_reporting",
+      "accounting",
+      "corporate_tax",
+      "investment_project",
+      "cash_declaration"
+    ],
+    "non_relevant_client_tags": [
+      "culture",
+      "education",
+      "health_social"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "налоговый орган",
+      "декларации",
+      "срок"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "028_tax_reporting_409_2024",
+    "filename": "028_tax_reporting_409_2024.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#25",
+    "document_title": "Постановление Правительства Российской Федерации от 01.04.2024 № 409 \"Об особенностях неприменения ответственности в 2024 году к лицам, состоящим на учете в налоговых органах по месту нахождения (месту жительства) на территориях Донецкой Народной Республики, Луганской Народной Республики, Запорожской области, Херсонской области\"",
+    "document_date": "2024-04-02",
+    "document_type_expected": "постановление",
+    "domain_expected": "tax_reporting",
+    "topics_expected": [
+      "налоги",
+      "налоговый контроль",
+      "отчетность",
+      "ФНС"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "tax_reporting",
+      "accounting",
+      "corporate_tax",
+      "investment_project",
+      "cash_declaration"
+    ],
+    "non_relevant_client_tags": [
+      "culture",
+      "education",
+      "health_social"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "налогоплательщиков",
+      "декларации",
+      "ответственности"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "029_info_security_it_1425_2020",
+    "filename": "029_info_security_it_1425_2020.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#39",
+    "document_title": "Постановление Правительства Российской Федерации от 14.09.2020 № 1425 \"Об утверждении Правил проведения экспертизы культурных ценностей и направления экспертом экспертного заключения в Министерство культуры Российской Федерации, а также критериев отнесения движимых предметов к культурным ценностям и отнесения культурных ценностей к культурным ценностям, имеющим особое историческое, художественное, научное или культурное значение\"",
+    "document_date": "2020-09-17",
+    "document_type_expected": "постановление",
+    "domain_expected": "info_security_it",
+    "topics_expected": [
+      "информационная безопасность",
+      "информационные системы",
+      "цифровые технологии",
+      "идентификация пользователей"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "it_system",
+      "info_security",
+      "online_service",
+      "messenger",
+      "digital_platform"
+    ],
+    "non_relevant_client_tags": [
+      "fuel_only",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "информационно-телекоммуникационной сети",
+      "утверждены Правила",
+      "срок"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "030_info_security_it_152-fz_2023",
+    "filename": "030_info_security_it_152-fz_2023.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "4.txt",
+    "document_title": "Федеральный закон от 28.04.2023 № 152-ФЗ \"О внесении изменений в статьи 3.5 и 14.55-2 Кодекса Российской Федерации об административных правонарушениях\"",
+    "document_date": "2023-04-28",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "info_security_it",
+    "topics_expected": [
+      "информационная безопасность",
+      "информационные системы",
+      "цифровые технологии",
+      "идентификация пользователей"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "it_system",
+      "info_security",
+      "online_service",
+      "messenger",
+      "digital_platform"
+    ],
+    "non_relevant_client_tags": [
+      "fuel_only",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "информационно-телекоммуникационной сети"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "031_info_security_it_1933_2025",
+    "filename": "031_info_security_it_1933_2025.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#26",
+    "document_title": "Постановление Правительства Российской Федерации от 28.11.2025 № 1933 \"О государственной информационной системе по предупреждению, выявлению и пресечению ограничивающих конкуренцию соглашений\"",
+    "document_date": "2025-12-09",
+    "document_type_expected": "постановление",
+    "domain_expected": "info_security_it",
+    "topics_expected": [
+      "информационная безопасность",
+      "информационные системы",
+      "цифровые технологии",
+      "идентификация пользователей"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "it_system",
+      "info_security",
+      "online_service",
+      "messenger",
+      "digital_platform"
+    ],
+    "non_relevant_client_tags": [
+      "fuel_only",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "цифровых технологий"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "032_info_security_it_63_2021",
+    "filename": "032_info_security_it_63_2021.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#29",
+    "document_title": "Постановление Правительства Российской Федерации от 28.01.2021 № 63 \"О приостановлении действия отдельных положений постановления Правительства Российской Федерации от 8 июня 2018 г. № 658\"",
+    "document_date": "2021-01-30",
+    "document_type_expected": "постановление",
+    "domain_expected": "info_security_it",
+    "topics_expected": [
+      "информационная безопасность",
+      "информационные системы",
+      "цифровые технологии",
+      "идентификация пользователей"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "it_system",
+      "info_security",
+      "online_service",
+      "messenger",
+      "digital_platform"
+    ],
+    "non_relevant_client_tags": [
+      "fuel_only",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "информационной безопасности"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "033_info_security_it_72-fz_2025",
+    "filename": "033_info_security_it_72-fz_2025.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#32",
+    "document_title": "Федеральный закон от 07.04.2025 № 72-ФЗ \"О внесении изменений в статью 12 Федерального закона \"О противодействии экстремистской деятельности\" и Федеральный закон \"О рекламе\"",
+    "document_date": "2025-04-07",
+    "document_type_expected": "федеральный закон",
+    "domain_expected": "info_security_it",
+    "topics_expected": [
+      "информационная безопасность",
+      "информационные системы",
+      "цифровые технологии",
+      "идентификация пользователей"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "it_system",
+      "info_security",
+      "online_service",
+      "messenger",
+      "digital_platform"
+    ],
+    "non_relevant_client_tags": [
+      "fuel_only",
+      "culture",
+      "education"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "информационных технологиях"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "034_product_marking_trade_137_2022",
+    "filename": "034_product_marking_trade_137_2022.txt",
+    "enabled": true,
+    "tier": "core",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "15.txt",
+    "document_title": "Постановление Правительства Российской Федерации от 09.02.2022 № 137 \"О проведении на территории Российской Федерации эксперимента по маркировке отдельных видов медицинских изделий средствами идентификации\"",
+    "document_date": "2022-02-10",
+    "document_type_expected": "постановление",
+    "domain_expected": "product_marking_trade",
+    "topics_expected": [
+      "маркировка товаров",
+      "товарный оборот",
+      "импорт",
+      "медицинские изделия"
+    ],
+    "impact_level_expected": "medium",
+    "relevant_client_tags": [
+      "product_marking",
+      "import",
+      "medical_devices",
+      "wholesale",
+      "retail"
+    ],
+    "non_relevant_client_tags": [
+      "bank_only",
+      "securities_market",
+      "culture"
+    ],
+    "notification_expected": "only_relevant_clients",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "маркировке",
+      "средствами идентификации",
+      "медицинских изделий",
+      "производителями",
+      "импортерами"
+    ],
+    "notes": "Selected as useful baseline/evaluation sample."
+  },
+  {
+    "id": "035_neutral_no_match_1762_2020",
+    "filename": "035_neutral_no_match_1762_2020.txt",
+    "enabled": true,
+    "tier": "no_match",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#35",
+    "document_title": "Постановление Правительства Российской Федерации от 30.10.2020 № 1762 \"О государственной социальной поддержке в 2020 - 2021 годах медицинских и иных работников медицинских и иных организаций (их структурных подразделений), оказывающих медицинскую помощь (участвующих в оказании, обеспечивающих оказание медицинской помощи) по диагностике и лечению новой коронавирусной инфекции (COVID-19), медицинских работников, контактирующих с пациентами с установленным диагнозом новой коронавирусной инфекции (COVID-19), внесении изменений во Временные правила учета информации в целях предотвращения распространения новой коронавирусной инфекции (COVID-19) и признании утратившими силу отдельных актов Правительства Российской Федерации\"",
+    "document_date": "2020-10-31",
+    "document_type_expected": "постановление",
+    "domain_expected": "neutral_no_match",
+    "topics_expected": [
+      "нейтральное регулирование",
+      "no-match"
+    ],
+    "impact_level_expected": "low",
+    "relevant_client_tags": [],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "broker",
+      "fuel",
+      "payment_service"
+    ],
+    "notification_expected": "none",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "утверждены Правила"
+    ],
+    "notes": "No-match control: system should not notify generic bank clients unless explicit relevance exists."
+  },
+  {
+    "id": "036_neutral_no_match_1342_2022",
+    "filename": "036_neutral_no_match_1342_2022.txt",
+    "enabled": true,
+    "tier": "no_match",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#42",
+    "document_title": "Постановление Правительства Российской Федерации от 28.07.2022 № 1342 \"О мерах по реализации Указа Президента Российской Федерации от 9 марта 2022 г. № 102 \"О премиях лучшим преподавателям в области музыкального искусства\"",
+    "document_date": "2022-07-29",
+    "document_type_expected": "постановление",
+    "domain_expected": "neutral_no_match",
+    "topics_expected": [
+      "нейтральное регулирование",
+      "no-match"
+    ],
+    "impact_level_expected": "low",
+    "relevant_client_tags": [],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "broker",
+      "fuel",
+      "payment_service"
+    ],
+    "notification_expected": "none",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "утверждены Правила"
+    ],
+    "notes": "No-match control: system should not notify generic bank clients unless explicit relevance exists."
+  },
+  {
+    "id": "037_neutral_no_match_2339_2021",
+    "filename": "037_neutral_no_match_2339_2021.txt",
+    "enabled": true,
+    "tier": "no_match",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#27",
+    "document_title": "Постановление Правительства Российской Федерации от 17.12.2021 № 2339 \"О реализации пилотного проекта по оказанию услуг по комплексной реабилитации и абилитации детей-инвалидов\"",
+    "document_date": "2021-12-22",
+    "document_type_expected": "постановление",
+    "domain_expected": "neutral_no_match",
+    "topics_expected": [
+      "нейтральное регулирование",
+      "no-match"
+    ],
+    "impact_level_expected": "low",
+    "relevant_client_tags": [],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "broker",
+      "fuel",
+      "payment_service"
+    ],
+    "notification_expected": "none",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "утверждены Правила"
+    ],
+    "notes": "No-match control: system should not notify generic bank clients unless explicit relevance exists."
+  },
+  {
+    "id": "038_neutral_no_match_1390-r_2021",
+    "filename": "038_neutral_no_match_1390-r_2021.txt",
+    "enabled": true,
+    "tier": "no_match",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#03",
+    "document_title": "Распоряжение Правительства Российской Федерации от 27.05.2021 № 1390-р",
+    "document_date": "2021-05-28",
+    "document_type_expected": "распоряжение",
+    "domain_expected": "neutral_no_match",
+    "topics_expected": [
+      "нейтральное регулирование",
+      "no-match"
+    ],
+    "impact_level_expected": "low",
+    "relevant_client_tags": [],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "broker",
+      "fuel",
+      "payment_service"
+    ],
+    "notification_expected": "none",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [
+      "срок"
+    ],
+    "notes": "No-match control: system should not notify generic bank clients unless explicit relevance exists."
+  },
+  {
+    "id": "039_neutral_no_match_1897_2020",
+    "filename": "039_neutral_no_match_1897_2020.txt",
+    "enabled": true,
+    "tier": "no_match",
+    "source": "publication.pravo.gov.ru / user-collected text extract",
+    "source_file_original": "Разные документы.txt#41",
+    "document_title": "Постановление Правительства Российской Федерации от 23.11.2020 № 1897 \"О внесении изменений в государственную программу Российской Федерации \"Развитие физической культуры и спорта\"",
+    "document_date": "2020-12-01",
+    "document_type_expected": "постановление",
+    "domain_expected": "neutral_no_match",
+    "topics_expected": [
+      "нейтральное регулирование",
+      "no-match"
+    ],
+    "impact_level_expected": "low",
+    "relevant_client_tags": [],
+    "non_relevant_client_tags": [
+      "ecommerce",
+      "saas",
+      "broker",
+      "fuel",
+      "payment_service"
+    ],
+    "notification_expected": "none",
+    "review_state_expected": "needs_review",
+    "evidence_must_include": [],
+    "notes": "No-match control: system should not notify generic bank clients unless explicit relevance exists."
+  }
+]
