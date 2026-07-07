@@ -25,6 +25,19 @@ services:
       timeout: 3s
       retries: 10
 
+  ai:
+    build:
+      context: ./regradar_ai
+      dockerfile: Dockerfile
+    environment:
+      LLM_PROVIDER: "${LLM_PROVIDER:-mock}"
+      POLZA_API_KEY: "${POLZA_API_KEY:-}"
+      POLZA_MODEL: "${POLZA_MODEL:-deepseek/deepseek-v4-flash}"
+      MAIN_BACKEND_URL: "http://api:8080"
+      BACKEND_CONTRACT_TIMEOUT_SECONDS: "120"
+    volumes:
+      - ai_data:/app/data
+
   api:
     build:
       context: .
@@ -34,11 +47,15 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      ai:
+        condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       ConnectionStrings__Redis: "redis:6379"
       Notifications__BitrixWebhookUrl: "${BITRIX_WEBHOOK_URL:-}"
+      Ai__Mode: "${AI_MODE:-http}"
+      Ai__BaseUrl: "http://ai:8000"
     ports:
       - "8080:8080"
     volumes:
@@ -51,13 +68,18 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      ai:
+        condition: service_healthy
     environment:
       DOTNET_ENVIRONMENT: Development
       ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       Ingestion__IntervalMinutes: "60"
+      Ai__Mode: "${AI_MODE:-http}"
+      Ai__BaseUrl: "http://ai:8000"
     volumes:
       - rawfiles:/app/storage/raw
 
 volumes:
   pgdata:
   rawfiles:
+  ai_data:

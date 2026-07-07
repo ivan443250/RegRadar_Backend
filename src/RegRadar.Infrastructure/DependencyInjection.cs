@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using RegRadar.Application.Abstractions;
 using RegRadar.Infrastructure.Ai;
@@ -34,7 +35,22 @@ public static class DependencyInjection
         services.Configure<StorageOptions>(config.GetSection("Storage"));
         services.AddScoped<IDocumentProcessingService, DocumentProcessingService>();
 
-        services.AddTransient<IAiAnalysisService, MockAiAnalysisService>();
+        services.Configure<AiOptions>(config.GetSection("Ai"));
+        string aiMode = config.GetSection("Ai")["Mode"] ?? "mock";
+        if (string.Equals(aiMode, "http", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddHttpClient(HttpAiAnalysisService.HttpClientName, (sp, client) =>
+            {
+                AiOptions ai = sp.GetRequiredService<IOptions<AiOptions>>().Value;
+                client.BaseAddress = new Uri(ai.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(ai.TimeoutSeconds);
+            });
+            services.AddScoped<IAiAnalysisService, HttpAiAnalysisService>();
+        }
+        else
+        {
+            services.AddTransient<IAiAnalysisService, MockAiAnalysisService>();
+        }
 
         services.Configure<BankOfRussiaOptions>(config.GetSection("BankOfRussia"));
         services.AddHttpClient(BankOfRussiaIngestor.HttpClientName, client =>
