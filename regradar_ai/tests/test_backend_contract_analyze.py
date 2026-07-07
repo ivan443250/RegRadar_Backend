@@ -74,6 +74,10 @@ def test_analyze_happy_path_contract_and_ready_chunks(client):
         "analysis",
         "impact",
         "clientRelevances",
+        "metadata",
+        "review",
+        "evidence",
+        "notificationDrafts",
     }
     assert data["provider"] == "mock"
     assert data["model"]
@@ -81,6 +85,66 @@ def test_analyze_happy_path_contract_and_ready_chunks(client):
     assert "персональные данные" in data["analysis"]["topics"]
     assert data["analysis"]["title"] == "Требования к персональным данным"
     assert data["impact"]["impact_score"] >= 0
+    assert data["metadata"]["runtime"] == "MOCK"
+    assert data["review"]["state"] in {"draft", "needs_review", "approved", "rejected"}
+    assert isinstance(data["review"]["required"], bool)
+    assert isinstance(data["evidence"], list)
+    assert isinstance(data["notificationDrafts"], list)
+
+
+def test_analyze_returns_extended_analysis_impact_and_relevance_fields(client):
+    response = client.post("/analyze", json=payload())
+    data = response.json()
+    assert response.status_code == 200
+    analysis = data["analysis"]
+    for field in (
+        "domain",
+        "status",
+        "affected_processes",
+        "restrictions",
+        "penalties_or_consequences",
+    ):
+        assert field in analysis
+    impact = data["impact"]
+    for field in (
+        "bank_impact",
+        "client_impact",
+        "affected_processes",
+        "possible_consequences",
+    ):
+        assert field in impact
+    relevance = data["clientRelevances"][0]
+    assert relevance["client_name"] == "ООО Персональные сервисы"
+    assert relevance["recommended_notification_type"]
+    drafts = data["notificationDrafts"]
+    assert drafts
+    assert {item["clientId"] for item in drafts} == {"client-guid-42"}
+    assert all(item["disclaimer"] for item in drafts)
+
+
+def test_analyze_accepts_structured_chunks_with_real_ids(client):
+    structured = [
+        {
+            "chunkId": "backend-chunk-guid-1",
+            "chunkIndex": 0,
+            "content": (
+                "Организации обязаны соблюдать требования 152-ФЗ к обработке "
+                "персональных данных и хранить согласия клиентов."
+            ),
+            "pageNumber": 3,
+            "sectionTitle": "Статья 2",
+        }
+    ]
+    response = client.post("/analyze", json=payload(chunks=structured))
+    data = response.json()
+    assert response.status_code == 200
+    assert "персональные данные" in data["analysis"]["topics"]
+    chunk_ids = {
+        item["chunkId"]
+        for item in data["evidence"]
+        if item["chunkId"] is not None
+    }
+    assert chunk_ids <= {"backend-chunk-guid-1"}
 
 
 def test_response_client_id_is_strictly_copied_from_request(client):

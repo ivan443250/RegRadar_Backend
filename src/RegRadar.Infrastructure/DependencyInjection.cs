@@ -46,10 +46,12 @@ public static class DependencyInjection
                 client.Timeout = TimeSpan.FromSeconds(ai.TimeoutSeconds);
             });
             services.AddScoped<IAiAnalysisService, HttpAiAnalysisService>();
+            services.AddScoped<IRagChatService, HttpRagChatService>();
         }
         else
         {
             services.AddTransient<IAiAnalysisService, MockAiAnalysisService>();
+            services.AddScoped<IRagChatService, MockRagChatService>();
         }
 
         services.Configure<BankOfRussiaOptions>(config.GetSection("BankOfRussia"));

@@ -133,11 +133,19 @@ class BackendContractClientDto(MainBackendDto):
     bank_segment: str | None = None
 
 
+class BackendContractChunkDto(MainBackendDto):
+    chunk_id: str
+    chunk_index: int = 0
+    content: str
+    page_number: int | None = None
+    section_title: str | None = None
+
+
 class BackendContractAnalyzeRequest(MainBackendDto):
     document_id: str
     title: str
     text: str
-    chunks: list[str] = Field(default_factory=list)
+    chunks: list[str | BackendContractChunkDto] = Field(default_factory=list)
     clients: list[BackendContractClientDto] = Field(default_factory=list)
 
 
@@ -150,17 +158,28 @@ class BackendContractDocumentAnalysis(BaseModel):
     title: str
     short_summary: str
     long_summary: str | None = None
+    domain: str | None = None
     regulator: str | None = None
     document_type: str | None = None
+    status: str | None = None
     topics: list[str]
     affected_industries: list[str]
+    affected_processes: list[str] = Field(default_factory=list)
     key_dates: list[BackendContractKeyDate] | None = None
     obligations: list[str]
+    restrictions: list[str] = Field(default_factory=list)
+    penalties_or_consequences: list[str] = Field(default_factory=list)
     source_fragments: list[str]
     confidence: float
+
+
 class BackendContractImpact(BaseModel):
     impact_score: int
     impact_level: Literal["low", "medium", "high", "critical"]
+    bank_impact: str | None = None
+    client_impact: str | None = None
+    affected_processes: list[str] = Field(default_factory=list)
+    possible_consequences: list[str] = Field(default_factory=list)
     reasoning: str
     evidence_fragments: list[str]
     urgency: str
@@ -169,12 +188,61 @@ class BackendContractImpact(BaseModel):
 
 class BackendContractClientRelevance(BaseModel):
     client_id: str
+    client_name: str | None = None
     relevance_score: int
     relevance_level: Literal["low", "medium", "high", "critical"]
     matched_factors: list[str]
     explanation_for_bank: str
     explanation_for_client: str
     evidence_fragments: list[str]
+    recommended_notification_type: str | None = None
+
+
+class BackendContractEvidenceFragment(MainBackendDto):
+    fragment_id: str
+    text: str
+    source_type: str
+    document_id: str | None = None
+    version_id: str | None = None
+    chunk_id: str | None = None
+    source_url: str | None = None
+    evidence_role: str
+
+
+class BackendContractNotificationDraft(MainBackendDto):
+    notification_id: str | None = None
+    client_id: str
+    client_name: str
+    title: str
+    short_message: str
+    full_message: str
+    client_friendly_explanation: str
+    source_link: str | None = None
+    disclaimer: str
+    priority: str
+    channel_payload: dict = Field(default_factory=dict)
+    document_id: str | None = None
+    version_id: str = "v1"
+    source_chunk_ids: list[str] = Field(default_factory=list)
+
+
+class BackendContractReview(MainBackendDto):
+    state: str
+    required: bool
+    no_data_reason: str | None = None
+
+
+class BackendContractMetadata(MainBackendDto):
+    runtime: str
+    fallback_used: bool = False
+    fallback_reason: str | None = None
+    processing_mode: str | None = None
+    client_profiles_source: str | None = None
+    warnings: list[str] = Field(default_factory=list)
+    selected_model: str | None = None
+    request_id: str | None = None
+    llm_call_ids: list[str] = Field(default_factory=list)
+    latency_ms: int | None = None
 
 
 class BackendContractAnalyzeResponse(MainBackendDto):
@@ -184,6 +252,12 @@ class BackendContractAnalyzeResponse(MainBackendDto):
     analysis: BackendContractDocumentAnalysis
     impact: BackendContractImpact
     client_relevances: list[BackendContractClientRelevance]
+    metadata: BackendContractMetadata | None = None
+    review: BackendContractReview | None = None
+    evidence: list[BackendContractEvidenceFragment] = Field(default_factory=list)
+    notification_drafts: list[BackendContractNotificationDraft] = Field(
+        default_factory=list
+    )
 
 
 class BackendContractHealthResponse(MainBackendDto):

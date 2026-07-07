@@ -1,6 +1,15 @@
-﻿using RegRadar.Domain.Enums;
+using RegRadar.Domain.Enums;
 
 namespace RegRadar.Application.Dtos;
+
+public record AiAnalysisChunk(Guid Id, int Index, string Content);
+
+public record AiAnalysisRequest(
+    Guid DocumentId,
+    string Title,
+    string Text,
+    IReadOnlyList<AiAnalysisChunk> Chunks,
+    IReadOnlyList<ClientProfileDto> Clients);
 
 public record AiAnalysisResult(
     string Title,
@@ -8,4 +17,5 @@ public record AiAnalysisResult(
     ImpactLevel ImpactLevel,
     string ImpactExplanation,
     DateOnly? EffectiveDate,
-    string[] Tags);
+    string[] Tags,
+    AiAnalysisDetails? Details = null);

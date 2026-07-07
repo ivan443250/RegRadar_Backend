@@ -1,4 +1,5 @@
 using RegRadar.Application.Dtos;
+using RegRadar.Application.Serialization;
 using RegRadar.Domain.Entities;
 
 namespace RegRadar.Application.Mapping;
@@ -14,7 +15,9 @@ public static class MappingExtensions
 
     public static RegulatoryEventDto ToDto(this RegulatoryEvent r) =>
         new(r.Id, r.DocumentId, r.Title, r.Summary, r.ImpactLevel, r.ImpactExplanation,
-            r.EffectiveDate, r.Status, r.Tags, r.CreatedAt);
+            r.EffectiveDate, r.Status, r.Tags, r.CreatedAt,
+            r.ImpactScore, r.Urgency, r.Domain, r.ReviewState, r.ReviewRequired,
+            AiDetailsSerializer.Deserialize(r.AiDetailsJson));
 
     public static ClientProfileDto ToDto(this ClientProfile p) =>
         new(p.Id, p.CompanyName, p.Okved, p.Industry, p.Size, p.HasForeignTrade,

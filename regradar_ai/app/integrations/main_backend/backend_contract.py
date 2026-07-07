@@ -18,8 +18,12 @@ from .schemas import (
     BackendContractAnalyzeResponse,
     BackendContractClientRelevance,
     BackendContractDocumentAnalysis,
+    BackendContractEvidenceFragment,
     BackendContractImpact,
     BackendContractKeyDate,
+    BackendContractMetadata,
+    BackendContractNotificationDraft,
+    BackendContractReview,
 )
 
 
@@ -63,15 +67,50 @@ class BackendContractService:
         relevances = [
             BackendContractClientRelevance(
                 client_id=item.client_id,
+                client_name=item.client_name,
                 relevance_score=item.relevance_score,
                 relevance_level=item.relevance_level,
                 matched_factors=item.matched_factors,
                 explanation_for_bank=item.explanation_for_bank,
                 explanation_for_client=item.explanation_for_client,
                 evidence_fragments=item.evidence_fragments,
+                recommended_notification_type=item.recommended_notification_type,
             )
             for item in card.client_relevance
             if item.client_id in allowed_client_ids
+        ]
+        drafts = [
+            BackendContractNotificationDraft(
+                notification_id=draft.notification_id,
+                client_id=draft.client_id,
+                client_name=draft.client_name,
+                title=draft.title,
+                short_message=draft.short_message,
+                full_message=draft.full_message,
+                client_friendly_explanation=draft.client_friendly_explanation,
+                source_link=draft.source_link,
+                disclaimer=draft.disclaimer,
+                priority=draft.priority,
+                channel_payload=draft.channel_payload,
+                document_id=draft.document_id,
+                version_id=draft.version_id,
+                source_chunk_ids=draft.source_chunk_ids,
+            )
+            for draft in card.notification_drafts
+            if draft.client_id in allowed_client_ids
+        ]
+        evidence = [
+            BackendContractEvidenceFragment(
+                fragment_id=fragment.fragment_id,
+                text=fragment.text,
+                source_type=fragment.source_type,
+                document_id=fragment.document_id,
+                version_id=fragment.version_id,
+                chunk_id=fragment.chunk_id,
+                source_url=fragment.source_url,
+                evidence_role=fragment.evidence_role,
+            )
+            for fragment in card.evidence_fragments
         ]
         analysis = card.document_analysis
         impact = card.impact_assessment
@@ -84,40 +123,86 @@ class BackendContractService:
                 title=card.title,
                 short_summary=analysis.short_summary,
                 long_summary=analysis.long_summary,
+                domain=analysis.domain,
                 regulator=analysis.regulator,
                 document_type=analysis.document_type,
+                status=analysis.status,
                 topics=analysis.topics,
                 affected_industries=analysis.affected_industries,
+                affected_processes=analysis.affected_processes,
                 key_dates=_map_key_dates(analysis.key_dates, source_text) or None,
                 obligations=analysis.obligations,
+                restrictions=analysis.restrictions,
+                penalties_or_consequences=analysis.penalties_or_consequences,
                 source_fragments=analysis.source_fragments,
                 confidence=analysis.confidence,
             ),
             impact=BackendContractImpact(
                 impact_score=impact.impact_score,
                 impact_level=impact.impact_level,
+                bank_impact=impact.bank_impact,
+                client_impact=impact.client_impact,
+                affected_processes=impact.affected_processes,
+                possible_consequences=impact.possible_consequences,
                 reasoning=impact.reasoning,
                 evidence_fragments=impact.evidence_fragments,
                 urgency=impact.urgency,
                 confidence=impact.confidence,
             ),
             client_relevances=relevances,
+            metadata=BackendContractMetadata(
+                runtime=metadata.runtime,
+                fallback_used=metadata.fallback_used,
+                fallback_reason=metadata.fallback_reason,
+                processing_mode=metadata.processing_mode,
+                client_profiles_source=metadata.client_profiles_source,
+                warnings=metadata.warnings,
+                selected_model=metadata.selected_model,
+                request_id=metadata.request_id,
+                llm_call_ids=metadata.llm_call_ids,
+                latency_ms=metadata.latency_ms,
+            ),
+            review=BackendContractReview(
+                state=card.review_state,
+                required=card.review_required,
+                no_data_reason=card.no_data_reason,
+            ),
+            evidence=evidence,
+            notification_drafts=drafts,
         )
 
 
 def _request_chunks(
     request: BackendContractAnalyzeRequest,
 ) -> list[DocumentChunkForAI]:
-    provided = [value.strip() for value in request.chunks if value.strip()]
-    if provided:
-        return [
-            DocumentChunkForAI(
-                chunk_id=f"chunk_{index}",
-                text=text,
-                order_index=index,
+    provided: list[DocumentChunkForAI] = []
+    for index, value in enumerate(request.chunks):
+        if isinstance(value, str):
+            text = value.strip()
+            if not text:
+                continue
+            provided.append(
+                DocumentChunkForAI(
+                    chunk_id=f"chunk_{index}",
+                    text=text,
+                    order_index=index,
+                )
             )
-            for index, text in enumerate(provided)
-        ]
+            continue
+        text = value.content.strip()
+        if not text:
+            continue
+        provided.append(
+            DocumentChunkForAI(
+                chunk_id=value.chunk_id or f"chunk_{index}",
+                text=text,
+                order_index=value.chunk_index,
+                section_title=value.section_title,
+                page_number=value.page_number,
+            )
+        )
+    if provided:
+        return provided
     return chunk_text_for_document(request.text)
 
 
