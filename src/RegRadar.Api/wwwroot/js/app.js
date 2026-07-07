@@ -3,6 +3,7 @@ const state = {
   impacts: {},
   loaded: false,
   changesFilter: { search: '', impact: '', regulator: '', tag: '', status: '', deadline: '', industry: '', notified: '' },
+  changesSort: 'impact_desc',
   filtersVisible: true,
   clientsSearch: '',
   notificationsSearch: '',
@@ -33,6 +34,10 @@ const MONTHS = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'И�
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function jsArg(s) {
+  return String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, ' ');
 }
 
 function fmtDate(d) {
@@ -130,6 +135,10 @@ function btnPrimary(label, onclick, iconName) {
   return `<button class="btn btn-primary" onclick="${onclick}">${iconName ? icon(iconName) : ''}${esc(label)}</button>`;
 }
 
+function btnTopbar(label, onclick, iconName, kind = 'outline') {
+  return `<button class="btn btn-${kind} topbar-btn" onclick="${onclick}">${iconName ? icon(iconName) : ''}${esc(label)}</button>`;
+}
+
 function renderTopbar(title, subtitle, actionsHtml) {
   document.getElementById('topbar').innerHTML = `
     <div class="page-heading"><h1>${esc(title)}</h1><p>${subtitle}</p></div>
@@ -167,8 +176,12 @@ function currentRoute() {
 function route() {
   if (!state.loaded) return;
   const [top, ...rest] = currentRoute();
-  setActiveNav(top || 'overview');
+  const routeName = top || 'overview';
+  setActiveNav(routeName);
   const page = document.getElementById('page');
+  document.body.dataset.route = routeName;
+  document.body.dataset.view = rest[0] ? `${routeName}-detail` : `${routeName}-list`;
+  page.className = `page page-${routeName}`;
   switch (top) {
     case 'changes':
       if (rest[0]) { renderChangeDetail(rest[0]); } else { renderChangesList(); }
@@ -181,6 +194,7 @@ function route() {
       if (rest[0]) { renderClientProfile(rest[0]); } else { renderClientsList(); }
       break;
     case 'notifications':
+      if (rest[0] === 'compose') document.body.dataset.view = 'notifications-compose';
       if (rest[0] === 'compose') { renderComposeNotification(rest[1], rest[2]); } else { renderNotificationsList(); }
       break;
     case 'sources': renderSources(); break;
@@ -312,9 +326,9 @@ function renderOverview() {
   }).join('');
 
   const deadlinesCard = `
-    <div class="card card-pad-sm">
+    <div class="card card-pad-sm deadlines-card">
       <div class="card-header"><div><div class="card-title">Ближайшие дедлайны</div><div class="card-subtitle">Сроки исполнения требований</div></div></div>
-      <div class="deadline-list">${deadlineRows || '<div class="empty-state">Дедлайнов не найдено</div>'}</div>
+      <div class="deadline-list">${deadlineRows || '<div class="deadline-empty"><span class="badge badge-positive">Нет срочных сроков</span><strong>Дедлайнов не найдено</strong><small>Новые сроки появятся здесь после обработки документов</small></div>'}</div>
       <span class="card-subtitle">${upcoming30.length} дедлайнов · ${upcoming7.length} требуют внимания</span>
     </div>`;
 
@@ -331,13 +345,13 @@ function renderOverview() {
   }).join('');
 
   const notifCard = `
-    <div class="card card-pad-sm">
+    <div class="card card-pad-sm recent-notifs-card">
       <div class="card-header"><div><div class="card-title">Последние уведомления</div><div class="card-subtitle">Готовые и отправленные сообщения</div></div>
         <a href="#/notifications" class="btn btn-outline small">Все уведомления</a></div>
       <div class="table-card">
         <table class="data-table">
           <thead><tr><th>Клиент</th><th>Статус</th><th>Изменение</th><th>Канал</th></tr></thead>
-          <tbody>${notifRows || '<tr><td colspan="4" class="empty-state">Уведомлений ещё нет</td></tr>'}</tbody>
+          <tbody>${notifRows || '<tr><td colspan="4" class="empty-state overview-notifs-empty">Уведомлений ещё нет</td></tr>'}</tbody>
         </table>
       </div>
     </div>`;
@@ -399,6 +413,35 @@ function updateChangesFilter(key, value) {
   route();
 }
 
+function updateChangesSort(value) {
+  state.changesSort = value || 'impact_desc';
+  route();
+}
+
+function compareChanges(a, b) {
+  const weight = { High: 3, Medium: 2, Low: 1 };
+  const impact = (weight[b.impactLevel] ?? 0) - (weight[a.impactLevel] ?? 0);
+  const createdDesc = new Date(b.createdAt) - new Date(a.createdAt);
+  switch (state.changesSort) {
+    case 'date_desc':
+      return createdDesc;
+    case 'date_asc':
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    case 'deadline_asc': {
+      const da = a.effectiveDate ? daysUntil(a.effectiveDate) : Number.POSITIVE_INFINITY;
+      const db = b.effectiveDate ? daysUntil(b.effectiveDate) : Number.POSITIVE_INFINITY;
+      return da - db || impact || createdDesc;
+    }
+    case 'clients_desc':
+      return (state.impacts[b.id] ?? []).length - (state.impacts[a.id] ?? []).length || impact || createdDesc;
+    case 'title_asc':
+      return a.title.localeCompare(b.title, 'ru') || impact || createdDesc;
+    case 'impact_desc':
+    default:
+      return impact || createdDesc;
+  }
+}
+
 function renderChangesList() {
   renderTopbar('Регуляторные изменения', 'Рабочий список событий, рисков и статусов обработки',
     fieldBox('q-changes', 'Поиск по названию или источнику…', state.changesFilter.search) +
@@ -431,13 +474,10 @@ function renderChangesList() {
     </div>` : '';
 
   const filtered = applyChangesFilters(state.events)
-    .sort((a, b) => ({ High: 3, Medium: 2, Low: 1 }[b.impactLevel]) - ({ High: 3, Medium: 2, Low: 1 }[a.impactLevel]));
+    .sort(compareChanges);
 
   const rows = filtered.map(e => {
     const impacts = state.impacts[e.id] ?? [];
-    const reviewBadge = e.reviewRequired
-      ? '<span class="badge badge-warning">На проверке</span>'
-      : `<span class="badge ${STATUS_BADGE[e.status]}">${STATUS_LABEL[e.status]}</span>`;
     return `<div class="change-row" onclick="location.hash='#/changes/${e.id}'">
       <div class="change-main">
         <span class="change-title">${esc(e.title)}</span>
@@ -447,14 +487,31 @@ function renderChangesList() {
       <div class="change-side">
         <span class="badge ${IMPACT_BADGE[e.impactLevel]}">${impactBadgeLabel(e)}</span>
         <span class="muted-count">${impacts.length} ${impacts.length === 1 ? 'клиент' : 'клиентов'}</span>
-        ${reviewBadge}
+        ${eventProcessBadge(e)}
       </div>
     </div>`;
   }).join('');
 
   const listCard = `
     <div class="card card-pad">
-      <div class="list-summary"><span class="count">${filtered.length} изменений</span><span class="sort">Сортировка: по влиянию ↓</span></div>
+      <div class="list-summary">
+        <span class="count">${filtered.length} изменений</span>
+        <div class="sort-control">
+          <span>Сортировка</span>
+          <div class="filter-select sort-select">
+            <select onchange="updateChangesSort(this.value)" aria-label="Сортировка изменений">
+              ${[
+                ['impact_desc', 'по влиянию ↓'],
+                ['date_desc', 'сначала новые'],
+                ['date_asc', 'сначала старые'],
+                ['deadline_asc', 'по дедлайну'],
+                ['clients_desc', 'по клиентам ↓'],
+                ['title_asc', 'по названию'],
+              ].map(([v, l]) => `<option value="${v}" ${state.changesSort === v ? 'selected' : ''}>${l}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>
       <div class="event-list">${rows || '<div class="empty-state">Нет изменений по заданным фильтрам</div>'}</div>
     </div>`;
 
@@ -462,7 +519,26 @@ function renderChangesList() {
 }
 
 function impactBadgeLabel(e) {
-  return IMPACT_LABEL[e.impactLevel] + (e.impactScore != null ? ' · ' + e.impactScore : '');
+  const score = e.impactScore;
+  let label = IMPACT_LABEL[e.impactLevel] ?? e.impactLevel ?? 'Оценка';
+  if (e.impactLevel === 'High' && score != null && score >= 85) label = 'Критический';
+  return label + (score != null ? ' · ' + score : '');
+}
+
+function impactSummaryLabel(e) {
+  const score = e.impactScore;
+  let label = IMPACT_LABEL_NEUTER[e.impactLevel] ?? IMPACT_LABEL[e.impactLevel] ?? e.impactLevel ?? 'Оценка';
+  if (e.impactLevel === 'High' && score != null && score >= 85) label = 'Критическое';
+  return `${label} влияние${score != null ? ' · ' + score : ''}`;
+}
+
+function eventProcessBadge(e) {
+  const hasNotification = state.notifications.some(n => n.regulatoryEventId === e.id);
+  if (hasNotification) return '<span class="badge badge-positive">Есть уведомления</span>';
+  if (e.reviewRequired) return '<span class="badge badge-warning">На проверке</span>';
+  if (e.impactScore == null && !e.impactExplanation) return '<span class="badge badge-info">Обработка</span>';
+  if (e.status === 'New') return '<span class="badge badge-info">Готово к разбору</span>';
+  return '<span class="badge badge-positive">Обработано</span>';
 }
 
 /* ---------- Change detail ---------- */
@@ -481,14 +557,16 @@ function renderChangeDetail(id) {
   if (!e) { document.getElementById('page').innerHTML = '<div class="empty-state">Изменение не найдено</div>'; return; }
   const doc = docFor(e);
   const ai = e.aiDetails ?? {};
-
-  renderTopbar(e.title, `${doc?.regulator ?? '—'} · ${esc(doc?.title ?? '')} · ${fmtDate(doc?.publicationDate)}`, genericActions('q-detail', 'Поиск по названию или источнику…'));
-  bindGlobalSearch('q-detail');
-
   const impacts = state.impacts[e.id] ?? [];
   const drafts = ai.notificationDrafts ?? [];
   const relevances = ai.clientRelevances ?? [];
   const colors = levelVars(e.impactLevel);
+  const firstClientId = impacts[0]?.clientProfileId;
+
+  renderTopbar('Карточка изменения', `${doc?.regulator ?? '—'} · ${esc(doc?.title ?? '')} · ${fmtDate(doc?.publicationDate)}`,
+    btnTopbar('Спросить ИИ', `location.hash='#/chat/${e.documentId}'`, 'icon-search') +
+    btnTopbar('Создать уведомление', firstClientId ? `location.hash='#/notifications/compose/${e.id}/${firstClientId}'` : "toast('Сначала нужен затронутый клиент')", 'icon-refresh') +
+    btnTopbar('Отправить в Bitrix', "toast('Отправка в Bitrix доступна из уведомления')", 'icon-upload', 'primary'));
 
   const readinessBadge = e.reviewRequired
     ? '<span class="badge badge-warning">Требует проверки</span>'
@@ -499,7 +577,7 @@ function renderChangeDetail(id) {
   const summary = `
     <div class="card summary-card">
       <div class="summary-top">
-        <span class="badge ${IMPACT_BADGE[e.impactLevel]}">${IMPACT_LABEL_NEUTER[e.impactLevel]} влияние${e.impactScore != null ? ' · ' + e.impactScore : ''}</span>
+        <span class="badge ${IMPACT_BADGE[e.impactLevel]}">${impactSummaryLabel(e)}</span>
         ${readinessBadge}
       </div>
       <div class="summary-title">${esc(e.title)}</div>
@@ -531,21 +609,6 @@ function renderChangeDetail(id) {
       </div>
     </div>`;
 
-  const bankClientImpact = (ai.bankImpact || ai.clientImpact) ? `
-    <div class="card section-card">
-      <div class="section-title">Влияние на банк и клиента</div>
-      <div class="two-col-notes">
-        <div class="note-block">
-          <span class="note-title">Что проверить банку</span>
-          <span class="note-body">${esc(ai.bankImpact ?? 'Нет данных')}</span>
-        </div>
-        <div class="note-block">
-          <span class="note-title">Что изменится для клиента</span>
-          <span class="note-body">${esc(ai.clientImpact ?? 'Нет данных')}</span>
-        </div>
-      </div>
-    </div>` : '';
-
   const consequences = ai.possibleConsequences ?? [];
   const processes = ai.affectedProcesses ?? [];
   const consequencesCard = (consequences.length || processes.length) ? `
@@ -559,23 +622,6 @@ function renderChangeDetail(id) {
         <div class="note-block">
           <span class="note-title">Процессы банка</span>
           <span class="note-body">${processes.map(p => '• ' + esc(p)).join('\n') || 'Затронутые процессы не определены'}</span>
-        </div>
-      </div>
-    </div>` : '';
-
-  const obligations = ai.obligations ?? [];
-  const restrictions = ai.restrictions ?? [];
-  const obligationsCard = (obligations.length || restrictions.length) ? `
-    <div class="card section-card">
-      <div class="section-title">Обязанности и ограничения</div>
-      <div class="two-col-notes">
-        <div class="note-block">
-          <span class="note-title">Обязанности</span>
-          <span class="note-body">${obligations.map(o => '• ' + esc(o)).join('\n') || 'Не выявлены'}</span>
-        </div>
-        <div class="note-block">
-          <span class="note-title">Ограничения</span>
-          <span class="note-body">${restrictions.map(r => '• ' + esc(r)).join('\n') || 'Не выявлены'}</span>
         </div>
       </div>
     </div>` : '';
@@ -602,31 +648,38 @@ function renderChangeDetail(id) {
   const relevanceFor = clientId =>
     relevances.find(r => r.clientId === clientId || r.clientId === String(clientId));
 
-  const clientRows = impacts.map(i => {
+  const clientRows = impacts.slice(0, 4).map(i => {
     const rel = relevanceFor(i.clientProfileId);
+    const client = clientFor(i.clientProfileId);
     return `
-    <div class="mini-row">
-      <div><div class="mini-label">${esc(i.companyName)}</div><div class="mini-value">${esc(rel?.explanationForBank ?? i.explanation ?? '')}</div></div>
-      <div style="display:flex;gap:8px;align-items:center">
+    <div class="mini-row" onclick="location.hash='#/clients/${i.clientProfileId}'">
+      <div><div class="mini-label">${esc(i.companyName)}</div><div class="mini-value">${esc(client?.industry ?? rel?.explanationForBank ?? i.explanation ?? '')}</div></div>
+      <div class="mini-actions">
         <span class="badge ${IMPACT_BADGE[i.impactLevel]}">${rel ? rel.relevanceScore + '% релевантность' : IMPACT_LABEL[i.impactLevel]}</span>
-        <a class="btn btn-outline small" href="#/notifications/compose/${e.id}/${i.clientProfileId}">Уведомить</a>
       </div>
     </div>`;
   }).join('');
 
+  const segmentRows = [...new Set(impacts.map(i => clientFor(i.clientProfileId)?.industry).filter(Boolean))]
+    .slice(0, 4)
+    .map(industry => {
+      const count = impacts.filter(i => clientFor(i.clientProfileId)?.industry === industry).length;
+      return `<div class="segment-row"><span>${esc(industry)} · ${count}</span></div>`;
+    }).join('');
+
+  const affectedSegments = `
+    <div class="card section-card side-card">
+      <div class="section-title">Затронутые сегменты</div>
+      <div class="card-subtitle">Релевантность рассчитана по профилям бизнеса</div>
+      <div class="mini-list">${segmentRows || '<div class="empty-state compact">Сегменты не определены</div>'}</div>
+    </div>`;
+
   const affectedClients = `
-    <div class="card section-card">
-      <div class="card-header"><div class="section-title">Затронутые клиенты (${impacts.length})</div>
+    <div class="card section-card side-card">
+      <div class="card-header"><div class="section-title">Затронутые клиенты</div>
         <button class="btn btn-outline small" onclick="recalcImpacts('${e.id}', this)">Пересчитать</button></div>
       <div class="mini-list">${clientRows || '<div class="empty-state">Влияние на клиентов не выявлено</div>'}</div>
     </div>`;
-
-  const keyDates = ai.keyDates ?? [];
-  const keyDatesCard = keyDates.length ? `
-    <div class="card section-card">
-      <div class="section-title">Ключевые даты</div>
-      ${keyDates.map(k => `<div class="attr-row"><span class="attr-label">${esc(k.meaning)}</span><span class="attr-value">${fmtDate(k.date)}</span></div>`).join('')}
-    </div>` : '';
 
   const meta = ai.metadata;
   const statusLines = [
@@ -635,7 +688,7 @@ function renderChangeDetail(id) {
     drafts.length ? `● Черновиков уведомлений: ${drafts.length}` : '● Уведомление можно создать вручную',
   ];
   const sourceCard = doc ? `
-    <div class="card section-card">
+    <div class="card section-card side-card">
       <div class="section-title">Оригинальный источник</div>
       <div class="source-box">
         <span class="source-name">${esc(doc.regulator ?? 'Документ')}</span>
@@ -652,20 +705,13 @@ function renderChangeDetail(id) {
       </div>` : ''}
     </div>` : '';
 
-  const chatCard = `
-    <div class="card section-card">
-      <div class="section-title">Вопросы по документу</div>
-      <span class="card-subtitle">RAG-чат отвечает по фрагментам этого документа со ссылками на источник</span>
-      <a class="btn btn-outline small" href="#/chat/${e.documentId}" style="align-self:flex-start">Спросить в RAG-чате</a>
-    </div>`;
-
   document.getElementById('page').innerHTML = `
     <span class="back-link" onclick="location.hash='#/changes'">← к списку изменений</span>
     <div class="detail-body">
       ${summary}
       <div class="detail-columns">
-        <div class="detail-main-col">${impactExplanation}${bankClientImpact}${consequencesCard}${obligationsCard}${fragmentsCard}</div>
-        <div class="detail-side-col">${affectedClients}${keyDatesCard}${sourceCard}${chatCard}</div>
+        <div class="detail-main-col">${impactExplanation}${consequencesCard}${fragmentsCard}</div>
+        <div class="detail-side-col">${affectedSegments}${affectedClients}${sourceCard}</div>
       </div>
     </div>`;
 }
@@ -888,14 +934,21 @@ function renderChatMessage(m) {
     </div>`;
 }
 
+function fillChatQuestion(question) {
+  const input = document.getElementById('chat-input');
+  if (!input || input.disabled) return;
+  input.value = question;
+  input.focus();
+}
+
 function renderChat() {
   renderTopbar('RAG-чат', 'Ответы по документам и профилям клиентов — только с источниками',
-    btnOutline('Для юриста банка', "setChatMode('lawyer')") + ' ' +
-    btnOutline('Простым языком', "setChatMode('plain')") + ' ' +
-    btnPrimary('Создать уведомление', "location.hash='#/notifications'", 'icon-upload'));
+    btnTopbar('Для юриста банка', "setChatMode('lawyer')", 'icon-search') +
+    btnTopbar('Простым языком', "setChatMode('plain')", 'icon-refresh') +
+    btnTopbar('Создать уведомление', "location.hash='#/notifications'", 'icon-upload', 'primary'));
 
   document.querySelectorAll('.topbar-actions .btn-outline').forEach((b, i) => {
-    if ((i === 0 && state.chatMode === 'lawyer') || (i === 1 && state.chatMode === 'plain')) b.classList.add('chip', 'active');
+    if ((i === 0 && state.chatMode === 'lawyer') || (i === 1 && state.chatMode === 'plain')) b.classList.add('mode-active');
   });
 
   const analyzedDocs = analyzedChatDocs();
@@ -906,8 +959,38 @@ function renderChat() {
   const lastAnswer = [...state.chatHistory].reverse().find(m => m.role === 'answer')?.answer;
   const sources = lastAnswer?.sources ?? [];
 
-  const thread = state.chatHistory.map(renderChatMessage).join('') ||
-    '<div class="empty-state">Выберите документ слева и задайте вопрос — ответ будет основан только на его фрагментах</div>';
+  const suggestions = [
+    'Почему этот документ важен для клиентов?',
+    'Какие процессы банка нужно проверить?',
+    'Какие фрагменты подтверждают вывод?',
+  ];
+  const thread = state.chatHistory.map(renderChatMessage).join('') || `
+    <div class="chat-empty-card">
+      <div class="aa-head">
+        <span class="aa-title">Ответ RegRadar</span>
+        <span class="badge badge-info">Ожидает вопрос</span>
+      </div>
+      <div class="aa-point">
+        Выберите один из рабочих вопросов или задайте свой. Ответ будет построен только по фрагментам выбранного документа и вернётся со ссылками на источники.
+      </div>
+      <div class="suggestion-row">
+        ${suggestions.map(q => `<button class="suggestion-chip" onclick="fillChatQuestion('${jsArg(q)}')">${esc(q)}</button>`).join('')}
+      </div>
+      <div class="aa-note">${currentDoc ? `Контекст: ${esc(currentDoc.title ?? 'документ')}` : 'Нет обработанного документа для контекста.'}</div>
+    </div>`;
+
+  const sourceCards = sources.length
+    ? sources.map((s, i) => `
+      <div class="rag-source">
+        <div class="rs-top"><span class="rs-name">${esc(currentDoc?.title ?? 'Источник ' + (i + 1))}</span><span class="rs-score">${Math.round((s.score ?? 0) * 100)}%</span></div>
+        <span class="rs-sub">Фрагмент ${i + 1} · официальный документ</span>
+        <span class="rs-link">Открыть источник ↗</span>
+      </div>`).join('')
+    : `<div class="rag-source">
+        <div class="rs-top"><span class="rs-name">${esc(currentDoc?.title ?? 'Документ не выбран')}</span><span class="rs-score">—</span></div>
+        <span class="rs-sub">${currentDoc ? esc(currentDoc.regulator ?? 'официальный документ') : 'Выберите документ'}</span>
+        <span class="rs-link">Источники появятся после ответа</span>
+      </div>`;
 
   const sourcesRows = sources.length
     ? sources.map((s, i) => `
@@ -917,23 +1000,11 @@ function renderChat() {
       </div>`).join('')
     : '<div class="empty-state" style="padding:16px">Источники появятся после первого ответа</div>';
 
-  const docPicker = `
-    <div class="card doc-picker">
-      <div class="dp-title">Документы (${analyzedDocs.length})</div>
-      <div class="doc-picker-search">
-        ${icon('icon-search')}
-        <input id="doc-picker-input" placeholder="Поиск документа…" value="${esc(state.chatDocSearch)}"
-          oninput="updateChatDocSearch(this.value)">
-      </div>
-      <div class="doc-picker-list" id="doc-picker-list">${docPickerItems()}</div>
-    </div>`;
-
   document.getElementById('page').innerHTML = `
     <div class="rag-body">
-      ${docPicker}
       <div class="card chat-panel">
         <div class="chat-context-bar">
-          <div><div class="ctx-title">${esc(currentDoc?.title ?? 'Документ не выбран')}</div><div class="ctx-sub">${currentDoc ? esc(currentDoc.regulator ?? 'Диалог по документу') : 'Загрузите и обработайте документ'}</div></div>
+          <div><div class="ctx-title">Контекст ответа</div><div class="ctx-sub">${currentDoc ? esc((currentDoc.title ?? '').slice(0, 64)) : 'Документ не выбран'}</div></div>
           <span class="badge ${sources.length ? 'badge-positive' : 'badge-info'}">${sources.length ? sources.length + ' источн.' : 'нет ответа'}</span>
         </div>
         <div class="chat-thread">${thread}${state.chatLoading ? '<div class="chat-loading">RegRadar анализирует фрагменты…</div>' : ''}</div>
@@ -943,6 +1014,11 @@ function renderChat() {
         </div>
       </div>
       <div class="detail-side-col">
+        <div class="card section-card">
+          <div class="section-title">Источники ответа</div>
+          <div class="card-subtitle">Цитаты можно открыть в контексте документа</div>
+          ${sourceCards}
+        </div>
         <div class="card section-card">
           <div class="section-title">Фрагменты документа</div>
           ${sourcesRows}
@@ -1008,14 +1084,22 @@ function renderNotificationsList() {
       <td><span class="badge ${NOTIF_STATUS_BADGE[n.status]}">${NOTIF_STATUS_LABEL[n.status]}</span></td>
     </tr>`).join('');
 
+  const empty = !rows ? `
+    <div class="designed-empty">
+      <span class="badge badge-info">Журнал пуст</span>
+      <h2>Уведомлений ещё не отправлялось</h2>
+      <p>После создания уведомлений клиентам они появятся здесь вместе со статусом отправки, каналом и ссылкой на изменение.</p>
+    </div>` : '';
+
   document.getElementById('page').innerHTML = `
     <div class="card card-pad">
+      ${rows ? `
       <div class="table-card">
         <table class="data-table">
           <thead><tr><th>Дата</th><th>Изменение</th><th>Клиент</th><th>Канал</th><th>Статус</th></tr></thead>
-          <tbody>${rows || '<tr><td colspan="5" class="empty-state">Уведомлений ещё не отправлялось</td></tr>'}</tbody>
+          <tbody>${rows}</tbody>
         </table>
-      </div>
+      </div>` : empty}
     </div>`;
 }
 
@@ -1026,8 +1110,10 @@ function renderComposeNotification(eventId, clientId) {
   const c = clientFor(clientId);
   if (!e || !c) { document.getElementById('page').innerHTML = '<div class="empty-state">Изменение или клиент не найдены</div>'; return; }
 
-  renderTopbar('Уведомление клиенту', `${esc(c.companyName)} · изменение «${esc(e.title.slice(0, 40))}${e.title.length > 40 ? '…' : ''}»`,
-    btnOutline('Предпросмотр', "document.querySelector('.json-preview')?.scrollIntoView({behavior:'smooth'})"));
+  renderTopbar('Уведомление клиенту', `${esc(c.companyName)} · изменение № ${esc(docFor(e)?.documentNumber ?? e.id.slice(0, 8))}`,
+    btnTopbar('Сохранить черновик', "toast('Черновик сохранён локально', 'ok')", 'icon-search') +
+    btnTopbar('Предпросмотр', "document.querySelector('.json-preview')?.scrollIntoView({behavior:'smooth'})", 'icon-refresh') +
+    btnTopbar('Отправить в Bitrix', `sendNotification('${eventId}','${clientId}', this)`, 'icon-upload', 'primary'));
 
   const imp = (state.impacts[eventId] ?? []).find(i => i.clientProfileId === clientId);
   const key = eventId + '|' + clientId;
@@ -1055,25 +1141,33 @@ function renderComposeNotification(eventId, clientId) {
 
   const editor = `
     <div class="notif-editor">
-      <div class="card field-group" style="padding:14px 18px">
-        <span class="fg-label">Клиент</span>
-        <div class="fg-input" style="display:flex;align-items:center">${esc(c.companyName)}</div>
-      </div>
-      <div class="card field-group" style="padding:14px 18px">
-        <span class="fg-label">Тема</span>
-        <div class="fg-input" style="display:flex;align-items:center">${esc(draft?.title ?? e.title)}</div>
+      <div class="card recipient-card">
+        <div class="field-row">
+          <div class="field-group recipient-client">
+            <span class="fg-label">Клиент</span>
+            <div class="fg-input">${esc(c.companyName)}</div>
+          </div>
+          <div class="field-group recipient-subject">
+            <span class="fg-label">Тема</span>
+            <div class="fg-input">${esc(draft?.title ?? e.title)}</div>
+          </div>
+        </div>
       </div>
       ${draftCards}
+      <div class="card section-card disclaimer-card">
+        <div class="section-title">Предупреждение</div>
+        <div class="disclaimer-box">${esc(draft?.disclaimer ?? 'Сообщение носит информационный характер и не является юридической консультацией. Применимость требований зависит от конкретных операций компании.')}</div>
+      </div>
       <div class="card section-card">
         <div class="section-title">Влияние и источник</div>
         <div class="impact-source-row">
           <span class="badge ${IMPACT_BADGE[e.impactLevel]}">${impactBadgeLabel(e)}</span>
-          ${rel ? `<span class="badge badge-info">${rel.relevanceScore}% релевантность</span>` : ''}
+          <span class="badge badge-info">${esc(docFor(e)?.regulator ?? 'Источник')}${docFor(e)?.documentNumber ? ' · ' + esc(docFor(e).documentNumber) : ''}</span>
           ${imp ? `<span class="badge badge-info">${esc(rel?.explanationForBank ?? imp.explanation ?? 'без пояснения')}</span>` : ''}
         </div>
         ${docFor(e)?.originalUrl ? `<a href="${esc(docFor(e).originalUrl)}" target="_blank" rel="noopener">Оригинал документа ↗</a>` : ''}
+        <span class="muted" style="font-size:10px">Сгенерировано RegRadar · проверено по фрагментам источника</span>
       </div>
-      <div class="disclaimer-box">${esc(draft?.disclaimer ?? 'Сообщение носит информационный характер и не является юридической консультацией. Применимость требований зависит от конкретных операций компании.')}</div>
       ${result
         ? btnOutline('Уже отправлено — обновить статус', `sendNotification('${eventId}','${clientId}', this)`)
         : btnPrimary('Отправить уведомление', `sendNotification('${eventId}','${clientId}', this)`)}
@@ -1085,12 +1179,21 @@ function renderComposeNotification(eventId, clientId) {
         <div class="section-title">Отправка</div>
         ${result ? `<span class="badge ${NOTIF_STATUS_BADGE[result.status]}">${NOTIF_STATUS_LABEL[result.status]}</span>` : `<span class="badge badge-warning">Не отправлено</span>`}
         <div class="attr-row"><span class="attr-label">Канал</span><span class="attr-value">${esc(result?.channel ?? '—')}</span></div>
+        <div class="attr-row"><span class="attr-label">Получатель</span><span class="attr-value">${esc(c.contactEmail ?? '—')}</span></div>
+        <div class="attr-row"><span class="attr-label">Ответственный</span><span class="attr-value">Елена Орлова</span></div>
         <div class="attr-row"><span class="attr-label">Отправлено</span><span class="attr-value">${fmtDateTime(result?.sentAt)}</span></div>
         ${result?.errorMessage ? `<div class="attr-row"><span class="attr-label">Ошибка</span><span class="attr-value">${esc(result.errorMessage)}</span></div>` : ''}
       </div>
       <div class="card section-card">
-        <div class="section-title">Данные для Bitrix</div>
+        <div class="card-header"><div class="section-title">Данные для Bitrix</div><span class="card-subtitle">JSON</span></div>
         <pre class="json-preview">${result?.payload ? esc(JSON.stringify(JSON.parse(result.payload), null, 2)) : 'Появится после отправки'}</pre>
+        <span class="card-subtitle">Данные будут записаны в карточку клиента и историю коммуникаций.</span>
+      </div>
+      <div class="card section-card">
+        <div class="section-title">Состояния отправки</div>
+        <div class="state-row"><span class="badge badge-info">Готово к отправке</span><span class="sr-note">Данные проверены</span></div>
+        <div class="state-row"><span class="badge badge-positive">Отправлено в Bitrix</span><span class="sr-note">ID активности появится после отправки</span></div>
+        <div class="state-row"><span class="badge badge-danger">Ошибка интеграции</span><span class="sr-note">Повторите отправку или сохраните черновик</span></div>
       </div>
     </div>`;
 
@@ -1145,8 +1248,14 @@ function renderSettings() {
   renderTopbar('Настройки', 'Учётная запись, интеграции и уведомления', '');
   document.getElementById('page').innerHTML = `
     <div class="card placeholder-card">
+      <span class="badge badge-info">Скоро</span>
       <h2>Раздел в разработке</h2>
       <p>Здесь появятся настройки интеграции с Bitrix24, управление пользователями и каналами уведомлений.</p>
+      <div class="settings-preview">
+        <span>Интеграция с Bitrix24</span>
+        <span>Управление пользователями</span>
+        <span>Каналы уведомлений</span>
+      </div>
     </div>`;
 }
 
