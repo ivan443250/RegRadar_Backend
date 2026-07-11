@@ -77,9 +77,13 @@ img.icon { display: block; }
   display: flex;
   flex-direction: column;
   gap: 20px;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 20;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .brand {
@@ -162,6 +166,8 @@ img.icon { display: block; }
 .content {
   flex: 1;
   min-width: 0;
+  width: calc(100% - var(--sidebar-width));
+  margin-left: var(--sidebar-width);
   padding: 24px 28px;
   display: flex;
   flex-direction: column;
@@ -1747,9 +1753,68 @@ table.data-table .empty-state {
 
 @media (max-width: 860px) {
   .app-shell { flex-direction: column; }
-  .sidebar { width: 100%; flex: none; height: auto; position: relative; flex-direction: row; align-items: center; padding: 14px 16px; gap: 12px; overflow-x: auto; }
+  .sidebar { width: 100%; flex: none; height: auto; max-height: none; position: relative; inset: auto; flex-direction: row; align-items: center; padding: 14px 16px; gap: 12px; overflow-x: auto; overflow-y: hidden; }
+  .content { width: 100%; margin-left: 0; }
   .nav-list { flex-direction: row; }
   .sidebar-spacer { display: none; }
   .account-card { display: none; }
   .kpi-row { grid-template-columns: 1fr; }
+}
+
+
+/* ---------- Admin actions ---------- */
+
+.admin-client-row {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.admin-client-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 142px;
+}
+
+.bulk-actions {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+
+.admin-hint {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.notif-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 860px) {
+  .admin-hint,
+  .admin-client-row,
+  .admin-client-actions {
+    align-items: stretch;
+  }
+
+  .admin-hint,
+  .admin-client-row {
+    flex-direction: column;
+  }
+
+  .admin-client-actions,
+  .notif-stats {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
 }

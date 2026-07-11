@@ -36,6 +36,65 @@ function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+function decodeHtmlEntities(s) {
+  let text = String(s ?? '');
+  if (!text) return text;
+
+  const decodeOnce = value => {
+    if (!/[&][a-zA-Z0-9#]+;/.test(value)) return value;
+
+    if (typeof document !== 'undefined') {
+      const textarea = document.createElement('textarea');
+      textarea.innerHTML = value;
+      return textarea.value;
+    }
+
+    return value
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&ndash;/gi, '\u2013')
+      .replace(/&mdash;/gi, '\u2014')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&laquo;/gi, '\u00ab')
+      .replace(/&raquo;/gi, '\u00bb')
+      .replace(/&amp;/gi, '&');
+  };
+
+  for (let i = 0; i < 4; i += 1) {
+    const decoded = decodeOnce(text);
+    if (decoded === text) break;
+    text = decoded;
+  }
+  return text;
+}
+
+function cleanFragmentText(s) {
+  return decodeHtmlEntities(s)
+    .replace(/(?:&)?nbsp;/gi, ' ')
+    .replace(/(?:&)?ndash;/gi, '\u2013')
+    .replace(/(?:&)?mdash;/gi, '\u2014')
+    .replace(/<br\s*\/?\s*>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\u00a0/g, ' ')
+    .replace(/[ \t\r\n]+/g, ' ')
+    .replace(/\s+([,.;:!?%])/g, '$1')
+    .replace(/([\u00ab(])\s+/g, '$1')
+    .replace(/\s+([\u00bb).])/g, '$1')
+    .trim();
+}
+
+function fragmentRoleLabel(role) {
+  const value = String(role ?? '').trim().toLowerCase();
+  const labels = {
+    document_source: '\u0444\u0440\u0430\u0433\u043c\u0435\u043d\u0442 \u0438\u0441\u0442\u043e\u0447\u043d\u0438\u043a\u0430',
+    source_fragment: '\u0444\u0440\u0430\u0433\u043c\u0435\u043d\u0442 \u0438\u0441\u0442\u043e\u0447\u043d\u0438\u043a\u0430',
+    source: '\u0444\u0440\u0430\u0433\u043c\u0435\u043d\u0442 \u0438\u0441\u0442\u043e\u0447\u043d\u0438\u043a\u0430',
+    evidence: '\u0434\u043e\u043a\u0430\u0437\u0430\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e',
+    quote: '\u0446\u0438\u0442\u0430\u0442\u0430 \u0438\u0437 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430',
+  };
+  return labels[value] ?? (value ? value.replaceAll('_', ' ') : labels.document_source);
+}
+
 function jsArg(s) {
   return String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, ' ');
 }
@@ -626,16 +685,23 @@ function renderChangeDetail(id) {
       </div>
     </div>` : '';
 
-  const evidence = (ai.evidence ?? []).length
-    ? ai.evidence.map((f, i) => `
+  const evidenceItems = (ai.evidence ?? [])
+    .map(f => ({ ...f, text: cleanFragmentText(f.text) }))
+    .filter(f => f.text);
+  const sourceFragmentItems = (ai.sourceFragments ?? [])
+    .map(cleanFragmentText)
+    .filter(Boolean);
+
+  const evidence = evidenceItems.length
+    ? evidenceItems.map((f, i) => `
       <div class="source-frag">
-        <span class="frag-tag">[${i + 1}] ${esc(f.evidenceRole || f.sourceType || 'фрагмент')}</span>
-        <span class="frag-quote">«${esc(f.text)}»</span>
+        <span class="frag-tag">[${i + 1}] ${esc(fragmentRoleLabel(f.evidenceRole || f.sourceType))}</span>
+        <span class="frag-quote">\u00ab${esc(f.text)}\u00bb</span>
       </div>`).join('')
-    : (ai.sourceFragments ?? []).map((t, i) => `
+    : sourceFragmentItems.map((t, i) => `
       <div class="source-frag">
-        <span class="frag-tag">[${i + 1}] фрагмент источника</span>
-        <span class="frag-quote">«${esc(t)}»</span>
+        <span class="frag-tag">[${i + 1}] ${esc(fragmentRoleLabel('document_source'))}</span>
+        <span class="frag-quote">\u00ab${esc(t)}\u00bb</span>
       </div>`).join('');
 
   const fragmentsCard = evidence ? `
@@ -648,14 +714,19 @@ function renderChangeDetail(id) {
   const relevanceFor = clientId =>
     relevances.find(r => r.clientId === clientId || r.clientId === String(clientId));
 
-  const clientRows = impacts.slice(0, 4).map(i => {
+  const notificationSentFor = clientId =>
+    state.notifications.some(n => n.regulatoryEventId === e.id && n.clientProfileId === clientId);
+
+  const clientRows = impacts.slice(0, 6).map(i => {
     const rel = relevanceFor(i.clientProfileId);
     const client = clientFor(i.clientProfileId);
+    const alreadySent = notificationSentFor(i.clientProfileId);
     return `
-    <div class="mini-row" onclick="location.hash='#/clients/${i.clientProfileId}'">
+    <div class="mini-row admin-client-row" onclick="location.hash='#/clients/${i.clientProfileId}'">
       <div><div class="mini-label">${esc(i.companyName)}</div><div class="mini-value">${esc(client?.industry ?? rel?.explanationForBank ?? i.explanation ?? '')}</div></div>
-      <div class="mini-actions">
-        <span class="badge ${IMPACT_BADGE[i.impactLevel]}">${rel ? rel.relevanceScore + '% релевантность' : IMPACT_LABEL[i.impactLevel]}</span>
+      <div class="mini-actions admin-client-actions">
+        <span class="badge ${alreadySent ? 'badge-positive' : IMPACT_BADGE[i.impactLevel]}">${alreadySent ? '\u0443\u0436\u0435 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0451\u043d' : (rel ? rel.relevanceScore + '% \u0440\u0435\u043b\u0435\u0432\u0430\u043d\u0442\u043d\u043e\u0441\u0442\u044c' : IMPACT_LABEL[i.impactLevel])}</span>
+        <button class="btn btn-outline small" onclick="event.stopPropagation(); sendNotification('${jsArg(e.id)}','${jsArg(i.clientProfileId)}', this, 'detail')">${alreadySent ? '\u0443\u0432\u0435\u0434\u043e\u043c\u0438\u0442\u044c \u0435\u0449\u0451' : '\u0443\u0432\u0435\u0434\u043e\u043c\u0438\u0442\u044c'}</button>
       </div>
     </div>`;
   }).join('');
@@ -676,9 +747,12 @@ function renderChangeDetail(id) {
 
   const affectedClients = `
     <div class="card section-card side-card">
-      <div class="card-header"><div class="section-title">Затронутые клиенты</div>
-        <button class="btn btn-outline small" onclick="recalcImpacts('${e.id}', this)">Пересчитать</button></div>
-      <div class="mini-list">${clientRows || '<div class="empty-state">Влияние на клиентов не выявлено</div>'}</div>
+      <div class="card-header"><div><div class="section-title">\u0417\u0430\u0442\u0440\u043e\u043d\u0443\u0442\u044b\u0435 \u043a\u043b\u0438\u0435\u043d\u0442\u044b</div><div class="card-subtitle">\u0410\u0434\u043c\u0438\u043d \u0432\u0438\u0434\u0438\u0442 \u0432\u0441\u0435 \u043c\u0430\u0442\u0447\u0438 \u0438 \u043c\u043e\u0436\u0435\u0442 \u0437\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c \u0440\u0430\u0441\u0441\u044b\u043b\u043a\u0443</div></div>
+        <button class="btn btn-outline small" onclick="recalcImpacts('${jsArg(e.id)}', this)">\u041f\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u0430\u0442\u044c</button></div>
+      <div class="bulk-actions">
+        <button class="btn btn-primary small" onclick="notifyAllClients('${jsArg(e.id)}', this)">${impacts.length ? '\u0423\u0432\u0435\u0434\u043e\u043c\u0438\u0442\u044c \u0432\u0441\u0435\u0445' : '\u041d\u0435\u0442 \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432'}</button>
+      </div>
+      <div class="mini-list">${clientRows || '<div class="empty-state">\u0412\u043b\u0438\u044f\u043d\u0438\u0435 \u043d\u0430 \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432 \u043d\u0435 \u0432\u044b\u044f\u0432\u043b\u0435\u043d\u043e</div>'}</div>
     </div>`;
 
   const meta = ai.metadata;
@@ -993,12 +1067,16 @@ function renderChat() {
       </div>`;
 
   const sourcesRows = sources.length
-    ? sources.map((s, i) => `
+    ? sources.map((s, i) => {
+      const quote = cleanFragmentText(s.text);
+      const shortQuote = quote.slice(0, 220);
+      return `
       <div class="rag-frag">
-        <span class="rf-tag">[${i + 1}] ${esc(currentDoc?.title.slice(0, 40) ?? 'документ')} · релевантность ${Math.round((s.score ?? 0) * 100) / 100}</span>
-        <span class="rf-quote">«${esc(s.text.slice(0, 220))}${s.text.length > 220 ? '…' : ''}»</span>
-      </div>`).join('')
-    : '<div class="empty-state" style="padding:16px">Источники появятся после первого ответа</div>';
+        <span class="rf-tag">[${i + 1}] ${esc(currentDoc?.title.slice(0, 40) ?? '\u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442')} \u00b7 \u0440\u0435\u043b\u0435\u0432\u0430\u043d\u0442\u043d\u043e\u0441\u0442\u044c ${Math.round((s.score ?? 0) * 100) / 100}</span>
+        <span class="rf-quote">\u00ab${esc(shortQuote)}${quote.length > 220 ? '\u2026' : ''}\u00bb</span>
+      </div>`;
+    }).join('')
+    : '<div class="empty-state" style="padding:16px">\u0418\u0441\u0442\u043e\u0447\u043d\u0438\u043a\u0438 \u043f\u043e\u044f\u0432\u044f\u0442\u0441\u044f \u043f\u043e\u0441\u043b\u0435 \u043f\u0435\u0440\u0432\u043e\u0433\u043e \u043e\u0442\u0432\u0435\u0442\u0430</div>';
 
   document.getElementById('page').innerHTML = `
     <div class="rag-body">
@@ -1067,36 +1145,45 @@ async function sendChatQuestion() {
 /* ---------- Notifications journal ---------- */
 
 function renderNotificationsList() {
-  renderTopbar('Уведомления', 'История отправленных и запланированных сообщений',
-    fieldBox('q-notifs', 'Поиск по клиенту или изменению…', state.notificationsSearch));
+  renderTopbar('\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f', '\u0410\u0434\u043c\u0438\u043d-\u0436\u0443\u0440\u043d\u0430\u043b: \u0432\u0441\u0435 \u0440\u0443\u0447\u043d\u044b\u0435, \u043c\u0430\u0441\u0441\u043e\u0432\u044b\u0435 \u0438 demo-\u043e\u0442\u043f\u0440\u0430\u0432\u043a\u0438 \u043a\u043b\u0438\u0435\u043d\u0442\u0430\u043c',
+    fieldBox('q-notifs', '\u041f\u043e\u0438\u0441\u043a \u043f\u043e \u043a\u043b\u0438\u0435\u043d\u0442\u0443 \u0438\u043b\u0438 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044e\u2026', state.notificationsSearch));
 
   document.getElementById('q-notifs')?.addEventListener('input', e => { state.notificationsSearch = e.target.value; route(); });
 
   const q = state.notificationsSearch.toLowerCase();
-  const rows = state.notifications
-    .map(n => ({ n, ev: state.events.find(e => e.id === n.regulatoryEventId), cl: clientFor(n.clientProfileId) }))
-    .filter(({ ev, cl }) => !q || (ev?.title ?? '').toLowerCase().includes(q) || (cl?.companyName ?? '').toLowerCase().includes(q))
-    .map(({ n, ev, cl }) => `<tr>
+  const mapped = state.notifications
+    .map(n => ({ n, ev: state.events.find(e => e.id === n.regulatoryEventId), cl: clientFor(n.clientProfileId) }));
+  const filtered = mapped
+    .filter(({ ev, cl }) => !q || (ev?.title ?? '').toLowerCase().includes(q) || (cl?.companyName ?? '').toLowerCase().includes(q));
+  const total = state.notifications.length;
+  const sentLike = state.notifications.filter(n => ['Sent', 'Mocked'].includes(n.status)).length;
+  const pending = state.notifications.filter(n => n.status === 'Pending').length;
+  const failed = state.notifications.filter(n => n.status === 'Failed').length;
+  const rows = filtered.map(({ n, ev, cl }) => `<tr>
       <td>${fmtDateTime(n.createdAt)}</td>
       <td>${esc(ev?.title.slice(0, 50) ?? n.regulatoryEventId)}</td>
-      <td>${esc(cl?.companyName ?? '—')}</td>
+      <td>${esc(cl?.companyName ?? '\u2014')}</td>
       <td>${esc(n.channel)}</td>
       <td><span class="badge ${NOTIF_STATUS_BADGE[n.status]}">${NOTIF_STATUS_LABEL[n.status]}</span></td>
     </tr>`).join('');
 
   const empty = !rows ? `
     <div class="designed-empty">
-      <span class="badge badge-info">Журнал пуст</span>
-      <h2>Уведомлений ещё не отправлялось</h2>
-      <p>После создания уведомлений клиентам они появятся здесь вместе со статусом отправки, каналом и ссылкой на изменение.</p>
+      <span class="badge badge-info">${total ? '\u041d\u0438\u0447\u0435\u0433\u043e \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e' : '\u0416\u0443\u0440\u043d\u0430\u043b \u043f\u0443\u0441\u0442'}</span>
+      <h2>${total ? '\u041d\u0435\u0442 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0439 \u043f\u043e \u044d\u0442\u043e\u043c\u0443 \u043f\u043e\u0438\u0441\u043a\u0443' : '\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0439 \u0435\u0449\u0451 \u043d\u0435 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u044f\u043b\u043e\u0441\u044c'}</h2>
+      <p>\u0412 \u0430\u0434\u043c\u0438\u043d-\u043f\u0430\u043d\u0435\u043b\u0438 \u0437\u0434\u0435\u0441\u044c \u0432\u0438\u0434\u0435\u043d \u043e\u0431\u0449\u0438\u0439 \u0436\u0443\u0440\u043d\u0430\u043b: \u043a\u043e\u043c\u0443, \u043f\u043e \u043a\u0430\u043a\u043e\u043c\u0443 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044e, \u043f\u043e \u043a\u0430\u043a\u043e\u043c\u0443 \u043a\u0430\u043d\u0430\u043b\u0443 \u0438 \u0441 \u043a\u0430\u043a\u0438\u043c \u0441\u0442\u0430\u0442\u0443\u0441\u043e\u043c \u0431\u044b\u043b\u043e \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e.</p>
     </div>` : '';
 
   document.getElementById('page').innerHTML = `
+    <div class="admin-hint card section-card">
+      <div><div class="section-title">\u0412\u044b \u0432 \u0430\u0434\u043c\u0438\u043d-\u043f\u0430\u043d\u0435\u043b\u0438 RegRadar</div><div class="card-subtitle">\u042d\u0442\u0430 \u0432\u043a\u043b\u0430\u0434\u043a\u0430 \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0432\u0441\u0435 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u043f\u043e \u0432\u0441\u0435\u043c \u043a\u043b\u0438\u0435\u043d\u0442\u0430\u043c, \u0430 \u043d\u0435 \u043b\u0438\u0447\u043d\u0443\u044e \u043f\u0430\u043f\u043a\u0443 \u043e\u0434\u043d\u043e\u0433\u043e \u0441\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u043a\u0430.</div></div>
+      <div class="notif-stats"><span class="badge badge-info">${total} \u0432\u0441\u0435\u0433\u043e</span><span class="badge badge-positive">${sentLike} \u043e\u0442\u043f\u0440.</span><span class="badge badge-warning">${pending} \u0432 \u043e\u0447\u0435\u0440\u0435\u0434\u0438</span>${failed ? `<span class="badge badge-danger">${failed} \u043e\u0448\u0438\u0431.</span>` : ''}</div>
+    </div>
     <div class="card card-pad">
       ${rows ? `
       <div class="table-card">
         <table class="data-table">
-          <thead><tr><th>Дата</th><th>Изменение</th><th>Клиент</th><th>Канал</th><th>Статус</th></tr></thead>
+          <thead><tr><th>\u0414\u0430\u0442\u0430</th><th>\u0418\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0435</th><th>\u041a\u043b\u0438\u0435\u043d\u0442</th><th>\u041a\u0430\u043d\u0430\u043b</th><th>\u0421\u0442\u0430\u0442\u0443\u0441</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>` : empty}
@@ -1180,7 +1267,7 @@ function renderComposeNotification(eventId, clientId) {
         ${result ? `<span class="badge ${NOTIF_STATUS_BADGE[result.status]}">${NOTIF_STATUS_LABEL[result.status]}</span>` : `<span class="badge badge-warning">Не отправлено</span>`}
         <div class="attr-row"><span class="attr-label">Канал</span><span class="attr-value">${esc(result?.channel ?? '—')}</span></div>
         <div class="attr-row"><span class="attr-label">Получатель</span><span class="attr-value">${esc(c.contactEmail ?? '—')}</span></div>
-        <div class="attr-row"><span class="attr-label">Ответственный</span><span class="attr-value">Елена Орлова</span></div>
+        <div class="attr-row"><span class="attr-label">Ответственный</span><span class="attr-value">Админ RegRadar</span></div>
         <div class="attr-row"><span class="attr-label">Отправлено</span><span class="attr-value">${fmtDateTime(result?.sentAt)}</span></div>
         ${result?.errorMessage ? `<div class="attr-row"><span class="attr-label">Ошибка</span><span class="attr-value">${esc(result.errorMessage)}</span></div>` : ''}
       </div>
@@ -1202,21 +1289,58 @@ function renderComposeNotification(eventId, clientId) {
     <div class="notif-body">${editor}${delivery}</div>`;
 }
 
-async function sendNotification(eventId, clientId, btn) {
-  btn.disabled = true;
-  const res = await api('/api/Notifications/send', {
+async function postNotification(eventId, clientId) {
+  return api('/api/Notifications/send', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ regulatoryEventId: eventId, clientProfileId: clientId }),
   });
-  btn.disabled = false;
+}
+
+function rememberNotification(eventId, clientId, notification) {
+  state.composeResult[eventId + '|' + clientId] = notification;
+  state.notifications.unshift(notification);
+}
+
+async function sendNotification(eventId, clientId, btn, returnTo = 'compose') {
+  if (btn) btn.disabled = true;
+  const res = await postNotification(eventId, clientId);
+  if (btn) btn.disabled = false;
   if (res.ok) {
-    state.composeResult[eventId + '|' + clientId] = res.data;
-    state.notifications.unshift(res.data);
-    toast(`Уведомление: ${NOTIF_STATUS_LABEL[res.data.status]} (канал ${res.data.channel})`, 'ok');
-    renderComposeNotification(eventId, clientId);
+    rememberNotification(eventId, clientId, res.data);
+    toast(`\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0435: ${NOTIF_STATUS_LABEL[res.data.status]} (\u043a\u0430\u043d\u0430\u043b ${res.data.channel})`, 'ok');
+    if (returnTo === 'detail') renderChangeDetail(eventId);
+    else renderComposeNotification(eventId, clientId);
   } else {
-    toast('Ошибка отправки: ' + (res.data?.error ?? res.status), 'err');
+    toast('\u041e\u0448\u0438\u0431\u043a\u0430 \u043e\u0442\u043f\u0440\u0430\u0432\u043a\u0438: ' + (res.data?.error ?? res.status), 'err');
   }
+}
+
+async function notifyAllClients(eventId, btn, autoMode = false) {
+  const clientIds = [...new Set((state.impacts[eventId] ?? []).map(i => i.clientProfileId).filter(Boolean))];
+  if (!clientIds.length) {
+    toast('\u041d\u0435\u0442 \u0437\u0430\u0442\u0440\u043e\u043d\u0443\u0442\u044b\u0445 \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432 \u0434\u043b\u044f \u0440\u0430\u0441\u0441\u044b\u043b\u043a\u0438', 'err');
+    return;
+  }
+  const message = autoMode
+    ? `\u0410\u0432\u0442\u043e\u0443\u0432\u0435\u0434\u043e\u043c\u0438\u0442\u044c ${clientIds.length} \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432 \u043f\u043e \u044d\u0442\u043e\u043c\u0443 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044e?`
+    : `\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f ${clientIds.length} \u0437\u0430\u0442\u0440\u043e\u043d\u0443\u0442\u044b\u043c \u043a\u043b\u0438\u0435\u043d\u0442\u0430\u043c?`;
+  if (!confirm(message)) return;
+
+  if (btn) { btn.disabled = true; btn.dataset.originalText = btn.textContent; btn.textContent = '\u041e\u0442\u043f\u0440\u0430\u0432\u043a\u0430\u2026'; }
+  let ok = 0;
+  let failed = 0;
+  for (const clientId of clientIds) {
+    const res = await postNotification(eventId, clientId);
+    if (res.ok) {
+      ok += 1;
+      rememberNotification(eventId, clientId, res.data);
+    } else {
+      failed += 1;
+    }
+  }
+  if (btn) { btn.disabled = false; btn.textContent = btn.dataset.originalText || '\u0423\u0432\u0435\u0434\u043e\u043c\u0438\u0442\u044c \u0432\u0441\u0435\u0445'; }
+  toast(`\u0420\u0430\u0441\u0441\u044b\u043b\u043a\u0430: ${ok} \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e${failed ? ', \u043e\u0448\u0438\u0431\u043e\u043a: ' + failed : ''}`, failed ? 'err' : 'ok');
+  renderChangeDetail(eventId);
 }
 
 /* ---------- Sources ---------- */
