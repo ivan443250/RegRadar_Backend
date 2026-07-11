@@ -68,11 +68,15 @@ PolzaAI API, optional
 - Свободные порты `8080`, `5432`, `6379`.
 
 ```powershell
-cd C:\Projects\GitHub\RegRadar_Backend
+git clone https://github.com/ivan443250/RegRadar_Backend.git
+cd RegRadar_Backend
 Copy-Item .env.example .env
+notepad .env
 
 docker compose up --build
 ```
+
+Перед запуском откройте `.env` и заполните значения под своё окружение. Бездумно копировать `.env.example` не стоит: в нём есть примеры и placeholder-значения. Для demo можно оставить `BITRIX_WEBHOOK_URL` и `POLZA_API_KEY` пустыми — тогда уведомления и LLM будут работать в безопасных mock/fallback-режимах.
 
 После старта:
 
@@ -325,7 +329,6 @@ AI-service поддерживает режимы:
 
 Frontend встроен в `RegRadar.Api` и раздаётся как static files.
 
-
 Frontend работает как demo-friendly админ-панель: администратор видит регуляторные изменения, клиентов, общий журнал уведомлений и может запускать отправку из карточки изменения.
 ```text
 src/RegRadar.Api/wwwroot/
@@ -386,12 +389,12 @@ src/RegRadar.Api/wwwroot/
 
 ## Конфигурация
 
-Корневой `.env.example` используется Docker Compose.
+Корневой `.env.example` — шаблон для локального `.env`. Скопируйте его, затем отредактируйте под своё окружение.
 
 ```env
 POSTGRES_DB=regradar
 POSTGRES_USER=regradar
-POSTGRES_PASSWORD=change_me
+POSTGRES_PASSWORD=<your-postgres-password>
 
 BITRIX_WEBHOOK_URL=
 
@@ -407,7 +410,7 @@ POLZA_MODEL=deepseek/deepseek-v4-flash
 |---|---|---|
 | `POSTGRES_DB` | `regradar` | Имя БД PostgreSQL |
 | `POSTGRES_USER` | `regradar` | Пользователь PostgreSQL |
-| `POSTGRES_PASSWORD` | `change_me` | Пароль PostgreSQL |
+| `POSTGRES_PASSWORD` | задать самостоятельно | Пароль PostgreSQL; должен совпадать с настройками контейнера/БД |
 | `BITRIX_WEBHOOK_URL` | пусто | Если пусто, уведомления работают в mock-режиме |
 | `AI_MODE` | `http` | `http` вызывает AI-service, `mock` включает встроенный backend fallback |
 | `LLM_PROVIDER` | `mock` | Режим внутри AI-service: `mock`, `polza`, `polza_with_fallback` |
